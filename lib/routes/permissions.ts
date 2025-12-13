@@ -1,11 +1,10 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-09-26T01:47:24.715Z
+// Generated at: 2025-12-13T18:07:05.487Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
-  '/': [],
-  '/order': [],
   '/pricing': [],
+  '/order': [],
   '/charts': [],
   '/backoffice': ['client:read'],
   '/[clientId]': ['customer:read_profile'],
@@ -30,13 +29,6 @@ export const routePermissions: Record<string, string[]> = {
   '/backoffice/clients/[clientId]/customers/[customerId]': ['client:read', 'customer:read', 'customer:delete', 'customer:update'],
   '/[clientId]/customer/me/profile/update': ['customer:read_profile'],
   '/[clientId]/admin/customers/[customerId]/update': ['customer:read_profile', 'customer:read', 'customer:delete', 'customer:update'],
-  '/api/backoffice/clients': ['client:read', 'client:create'],
-  '/api/auth/reset-password': [],
-  '/api/auth/forgot-password': [],
-  '/api/auth/[...nextauth]': [],
-  '/api/[clientId]/customers': ['customer:read', 'customer:create'],
-  '/api/backoffice/clients/[clientId]': ['client:read', 'client:create'],
-  '/api/[clientId]/customers/[id]': ['customer:read', 'customer:create', 'customer:update', 'customer:delete'],
   '/:clientId': ['customer:read_profile'],
   '/auth': [],
   '/:clientId/customer': ['customer:read_profile'],
@@ -56,12 +48,4 @@ export const routePermissions: Record<string, string[]> = {
   '/backoffice/clients/:clientId/customers/:customerId': ['client:read', 'customer:read', 'customer:delete', 'customer:update'],
   '/:clientId/customer/me/profile/update': ['customer:read_profile'],
   '/:clientId/admin/customers/:customerId/update': ['customer:read_profile', 'customer:read', 'customer:delete', 'customer:update'],
-  '/api': [],
-  '/api/backoffice': [],
-  '/api/auth': [],
-  '/api/auth/*': [],
-  '/api/[clientId]': [],
-  '/api/:clientId/customers': ['customer:read', 'customer:create'],
-  '/api/backoffice/clients/:clientId': ['client:read', 'client:create'],
-  '/api/:clientId/customers/:id': ['customer:read', 'customer:create', 'customer:update', 'customer:delete'],
 } as const;
