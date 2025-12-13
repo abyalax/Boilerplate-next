@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model cv {
+  id          Int    @id @default(autoincrement())
+  user_id     Int
+  name        String @db.VarChar(255)
+  email       String @db.VarChar(100)
+  address     String @db.VarChar(255)
+  linkedin    String @db.VarChar(100)
+  about       String
+  interest    Json
+  skill       Json
+  education   Json
+  experience  Json
+  projects    Json
+  certificate Json
+
+  users users @relation(fields: [user_id], references: [id])
+
+  @@index([name])
+  @@index([email])
+}
+
+model users {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  password String @db.VarChar(255)
+  email    String @unique @db.VarChar(255)
+
+  cv         cv[]
+  user_roles user_roles[]
+
+  @@index([name])
+}
+
+model permissions {
+  id               Int                @id @default(autoincrement())
+  key              String             @unique(map: "permissions_key_unique") @db.VarChar(100)
+  name             String             @db.VarChar(100)
+  role_permissions role_permissions[]
+}
+
+model role_permissions {
+  roleId       Int
+  permissionId Int
+  rolesId      Int?
+
+  role       roles       @relation(fields: [roleId], references: [id])
+  permission permissions @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId], map: "role_permissions_roleId_permissionId_pk")
+}
+
+model roles {
+  id               Int                @id @default(autoincrement())
+  name             String             @unique(map: "roles_name_unique") @db.VarChar(100)
+  role_permissions role_permissions[]
+  user_roles       user_roles[] // <<< Tambahkan ini
+}
+
+model user_roles {
+  userId Int
+  roleId Int
+
+  user users @relation(fields: [userId], references: [id])
+  role roles @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId], map: "user_roles_userId_roleId_pk")
+}

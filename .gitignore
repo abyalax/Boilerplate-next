@@ -44,3 +44,11 @@ next-env.d.ts
 
 # This is for my Playgorund with query drizzle
 main.ts
+
+/python/libs/*
+python/
+!python/extract_cv.py
+/generated/prisma
+
+/generated/prisma
+/uploads/*

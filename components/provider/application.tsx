@@ -5,6 +5,11 @@ import { SessionProvider } from 'next-auth/react';
 import { FC, PropsWithChildren } from 'react';
 import { QueryClientProvider } from '~/components/provider/query-client';
 import { ThemeProvider } from '~/components/provider/theme';
+import { DirectionProvider } from '../context/direction-provider';
+import { FontProvider } from '../context/font-provider';
+import { LayoutProvider } from '../context/layout-provider';
+import { SearchProvider } from '../context/search-provider';
+import { NavigationProgress } from '../fragments/progress/navigation-progress';
 import { Toaster } from '../ui/toaster';
 
 interface ProviderProps extends PropsWithChildren {
@@ -14,12 +19,23 @@ interface ProviderProps extends PropsWithChildren {
 export const Providers: FC<ProviderProps> = ({ children, dehydratedState }) => {
   return (
     <SessionProvider>
-      <ThemeProvider>
-        <Toaster />
-        <QueryClientProvider>
-          <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
-        </QueryClientProvider>
-      </ThemeProvider>
+      <QueryClientProvider>
+        <HydrationBoundary state={dehydratedState}>
+          <ThemeProvider>
+            <FontProvider>
+              <DirectionProvider>
+                <SearchProvider>
+                  <LayoutProvider>
+                    <Toaster />
+                    <NavigationProgress />
+                    {children}
+                  </LayoutProvider>
+                </SearchProvider>
+              </DirectionProvider>
+            </FontProvider>
+          </ThemeProvider>
+        </HydrationBoundary>
+      </QueryClientProvider>
     </SessionProvider>
   );
 };

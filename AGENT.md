@@ -1,50 +1,55 @@
-Contoh use case penggunaan boilerplate
 
-```
-  Platform dengan konsep multi-tenant di mana setiap toko (client) memiliki ruang terisolasi untuk mengelola aplikasi POS mereka sendiri, termasuk produk, customer, dan transaksi. Tenant diidentifikasi dengan parameter clientId pada URL sehingga seluruh rute aplikasi, baik untuk admin toko maupun customer, selalu berada dalam scope client tertentu. Struktur routing dipisahkan menjadi tiga lapisan utama: public routes untuk landing, pricing, dan order setup; tenant routes yang terbagi menjadi admin (/[clientId]/admin/...) untuk mengelola data toko dan customer (/[clientId]/me/... atau /[clientId]/orders/...) untuk aktivitas pengguna akhir; serta backoffice routes (/backoffice/...) untuk super admin yang mengawasi seluruh tenant. Dengan pola ini, data dan akses setiap tenant tetap terisolasi namun dapat dikelola secara terpusat.
-```
+# Technical Business
 
-Urutan Access : Guest => Customer => Client Admin => System Admin
+Analitica CV adalah Software as A Service yang berfungsi untuk melakukan analisis pada banyak CV di perusahaan sekaligus.
+Di balik layar software ini menerapkan teknologi RAG dan Multi Agent AI untuk melakukan analisis dokumen CV.
 
-```ts
-const pathnames = [
-  // Public
-  "/", // landing page
-  "/pricing", // pricing
-  "/order", // order POS app (request setup)
+Flow Apps
 
-  // Auth
-  "/admin/auth/login", // login client admin
-  "/admin/auth/register", // register client admin
+- HRD memasukkan data internal perusahaan sebagai pengetahuan dasar AI, seperti kultur perusahaan, budaya kerja, agile, scrumbs, etc.
+- Sistem melakukan ekstraksi dokumen ini untuk dijadikan base knowledge perusahaan.
+- HRD memasukkan job description pada lowongan yang terbuka.
 
-  "/[clientId]/auth/login", // login customer ke client Admin
-  "/[clientId]/auth/register", // register customer ke client Admin
+- HRD membuat agent ai spesific pada job description atau posisi yang akan di carikan kandidat, 
+    misalkan posisi frontend engineer, maka di posisi ini setidaknya ada satu agent ai yang expert dan akan terlatih di domain ini. namun HRD juga availbale untuk membuat agent lagi di posisi ini dengan job desc berbeda, misalkan junior frontend engineer dan senior frontend engineer.
 
-  // Customer (scoped by clientId)
-  "/[clientId]/customer/me/profile", // profile view
-  "/[clientId]/customer/me/profile/update", // update profile
+- HRD upload banyak CV ke dalam sistem, kemudian sistem akan melakukan ekstraksi pada data CV (format pdf).
+    sistem akan menyimpan data hasil ekstraksi ini ke database beserta file pdf nya
+    
+    ```
+    Flow PDF CV Extraction
 
-  "/[clientId]/customer/orders", // list orders
-  "/[clientId]/customer/orders/[orderId]", // detail order
+    PDF -> Image
+    Layout Detection Model ( Detectron2 / LayoutParser )
+    OCR ( PaddleOCR atau Tesseract )
+    NER Model ( LayoutLMv3 )
+    Rule-based CV Section Extractor
+    Return stuctured JSON Ready To Use
+    ```
 
-  // Client Admin (tenant side)
-  "/[clientId]/admin", // dashboard
-  "/[clientId]/admin/customers", // list customers
-  "/[clientId]/admin/customers/create", // create customer
-  "/[clientId]/admin/customers/[customerId]", // detail customer
-  "/[clientId]/admin/customers/[customerId]/edit", // update customer
+- HRD dapat memilih cv yang akan di lakukan analisis, 
+    setiap cv yang sudah pernah di analsis akan di simpan hasilnnya, dan hasilnya ini akan related ke data cv nya (melekat), 
+    satu CV hanya bisa di analisis satu kali ( re analisis dilakukan di next development ).
 
-  // Backoffice (super admin)
-  "/backoffice",
-  "/backoffice/clients",
-  "/backoffice/clients/create", // create client
-  "/backoffice/clients/[clientId]", // detail client
-  "/backoffice/clients/[clientId]/edit", // update client
-  "/backoffice/clients/[clientId]/customers",
-  "/backoffice/clients/[clientId]/customers/[customerId]",
-  "/backoffice/clients/[clientId]/customers/[customerId]/edit",
-];
-```
+- Sistem akan melakukan analisis data CV ( hasil ekstraksi ) 
+    Sistem akan mencari dokumen internal perusahaan untuk mencari pengetahuan related terlebih dahulu seperti histori penilaian cv, culture perusahaan, dsb ( proses RAG berada disini )
+    Sistem akan menampilkan dalam bentuk ranking ke HRD berdasarkan match by AI agent di job desc tertentu ( selected by HRD ).
+
+- Berdasarkan hasil analisa ini HRD juga dapat melakukan chatting ke Agent AI untuk berdiskusi tentang CV terbaik.
+    chats ini akan disimpan oleh sistem sehingga obrolan dapat di lanjut tanpa kehilangan context.
+
+saya butuh untuk design schema table databasenya
+cv
+sessions
+users (already exists, we just need to create relations)
+agents
+knowledge_base (data internal perusahaan) => not priority, next development aja
+knowledge_ (for RAG) => next development
+
+
+
+
+# Technical Code
 
 ## Available Scripts
 
@@ -74,7 +79,7 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
   Setiap file `app/**/page.tsx` atau `app/**/route.ts` bisa mengekspor
 
   ```ts
-  export const permissions = [PERMISSIONS.CUSTOMER.READ, ...]`.
+  export const permissions = [PERMISSIONS.CV.READ, ...]`.
   ```
 
 - **Auto-generate path permissions**:
@@ -104,7 +109,7 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
 
    ```ts
    // app/admin/page.tsx
-   export const permissions = [PERMISSIONS.CUSTOMER.READ, PERMISSIONS.CUSTOMER.UPDATE ]`. // halaman ini butuh keduanya
+   export const permissions = [PERMISSIONS.CV.READ, PERMISSIONS.CV.UPDATE ]`. // halaman ini butuh keduanya
 
    export default function Page() {
    return <div>Admin</div>;
@@ -121,8 +126,8 @@ RBAC di proyek ini berbasis NextAuth (JWT) + middleware App Router:
    // example guard permissions, but does'nt support per method security
    // all handler will be protected to this permission
    export const permissions = [
-     PERMISSIONS.CUSTOMER.READ,
-     PERMISSIONS.CUSTOMER.UPDATE,
+     PERMISSIONS.CV.READ,
+     PERMISSIONS.CV.UPDATE,
    ];
 
    export const GET = safeHandler(async () => {

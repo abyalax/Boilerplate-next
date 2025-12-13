@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-
 import { PageLogin } from './_components/page-login';
 
 export const metadata: Metadata = {

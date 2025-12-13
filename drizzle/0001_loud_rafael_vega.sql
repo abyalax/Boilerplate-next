@@ -1,1 +1,0 @@
-CREATE INDEX "name_search_index" ON "users" USING gin (to_tsvector('simple', "name"));

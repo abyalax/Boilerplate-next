@@ -53,3 +53,7 @@ export const formatCurrency = (value: string) => {
     currency: 'IDR',
   }).format(intValue);
 };
+
+export function sleep(ms: number = 1000) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

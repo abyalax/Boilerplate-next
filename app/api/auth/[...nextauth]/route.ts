@@ -1,14 +1,11 @@
 import * as bcrypt from 'bcrypt';
-import { eq } from 'drizzle-orm';
 import { AuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-
 import { env } from '~/common/const/credential';
-import { userRepository } from '~/db/repositories/users.repository';
-import { users } from '~/db/schema';
 import { NotFoundException, UnauthorizedException } from '~/lib/handler/error';
+import { userService } from '~/modules/users/user.service';
 
 const options: AuthOptions = {
   session: {
@@ -45,11 +42,11 @@ const options: AuthOptions = {
       },
       async authorize(credentials) {
         if (credentials?.email && credentials?.password) {
-          const user = await userRepository.rawFindFirst(eq(users.email, credentials?.email));
+          const user = await userService.findUser({ email: credentials.email });
           if (user === undefined) throw new NotFoundException('User not found');
           const isValid = await bcrypt.compare(credentials.password, user.password);
           if (!isValid) throw new UnauthorizedException('Invalid Password');
-          return userRepository.flattenRolePermission(user);
+          return user;
         } else {
           return null;
         }
@@ -60,7 +57,7 @@ const options: AuthOptions = {
   callbacks: {
     async jwt({ token }) {
       if (token.email) {
-        const user = await userRepository.findFirst(eq(users.email, token.email));
+        const user = await userService.findUser({ email: token.email });
         if (user === undefined) return token;
         token.id = user.id;
         token.roles = user.roles;
@@ -80,13 +77,21 @@ const options: AuthOptions = {
 
     async signIn({ account, profile }) {
       if (account?.provider === 'google' && profile?.email) {
-        const user = await userRepository.baseFind(eq(users.email, profile.email));
+        const user = await userService.findByEmail(profile.email);
         if (user === undefined) {
-          await userRepository.create({
+          await userService.create({
             name: profile.name ?? profile.email.split('@')[0],
             email: profile.email,
             password: '',
-            roleId: 1,
+            user_roles: {
+              create: {
+                role: {
+                  connect: {
+                    id: 1,
+                  },
+                },
+              },
+            },
           });
           return true;
         }

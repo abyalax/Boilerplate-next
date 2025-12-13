@@ -7,11 +7,12 @@ import { getQueryClient } from '~/lib/query/client';
 
 export const QueryClientProvider: FC<PropsWithChildren> = ({ children }) => {
   const queryClient = getQueryClient();
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   return (
     <ReactQueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools position="left" />
+      {isDevelopment && <ReactQueryDevtools position="left" />}
     </ReactQueryClientProvider>
   );
 };

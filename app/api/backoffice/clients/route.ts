@@ -1,43 +1,12 @@
-import { SQL, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
-
-import { PERMISSIONS } from '~/common/const/permission';
-import { MetaResponse } from '~/common/types/meta';
-import { TResponse } from '~/common/types/response';
-import { paginate } from '~/db/helper';
-import { clientRepository } from '~/db/repositories/clients.repository';
-import { BaseUser, userInsertSchema, users } from '~/db/schema';
 import { safeHandler } from '~/lib/handler/safe-handler';
 
-export const permissions = [PERMISSIONS.CLIENT.READ, PERMISSIONS.CLIENT.CREATE];
+export const permissions = [];
 
-export const GET = safeHandler(async (req): Promise<NextResponse<TResponse<{ data: BaseUser[]; meta: MetaResponse }>>> => {
-  const pageParams = req.nextUrl.searchParams.get('page');
-  const perPageParams = req.nextUrl.searchParams.get('per_page');
-  const searchParams = req.nextUrl.searchParams.get('search');
-
-  let searchClause: SQL | undefined;
-
-  const page = pageParams ? Number(pageParams) : 1;
-  const perPage = perPageParams ? Number(perPageParams) : 10;
-
-  if (searchParams) searchClause = sql`to_tsvector('simple', "users"."name") @@ plainto_tsquery('simple', ${searchParams})`;
-
-  const whereClause = await clientRepository.clientWhere(searchClause);
-  const data = await paginate<BaseUser>({
-    table: users,
-    page,
-    perPage,
-    where: whereClause,
-  });
-  return NextResponse.json({
-    data,
-  });
+export const GET = safeHandler(async () => {
+  return NextResponse.json({ message: 'OK, but service not implemented yet' });
 });
 
-export const POST = safeHandler(async (req): Promise<NextResponse<TResponse<BaseUser>>> => {
-  const body = await req.json();
-  const parsed = userInsertSchema.parse(body);
-  const created = await clientRepository.create(parsed);
-  return NextResponse.json({ data: created });
+export const POST = safeHandler(async () => {
+  return NextResponse.json({ message: 'OK, but service not implemented yet' });
 });

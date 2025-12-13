@@ -1,39 +1,41 @@
 /** biome-ignore-all lint/style/useNamingConvention: <off> */
-export type roles = 'Customer' | 'Client Admin' | 'System Admin';
+export type roles = 'Client' | 'Admin';
 
 export const ROLE = {
-  CUSTOMER: 'Customer',
-  CLIENT: 'Client Admin',
-  SYSTEM_ADMIN: 'System Admin',
+  CLIENT: 'Client',
+  ADMIN: 'Admin',
 } as const;
 
-export const ROLEIDS: Record<string, number> = {
-  Customer: 1,
-  'Client Admin': 2,
-  'System Admin': 3,
+export const ROLEIDS = {
+  Client: 1,
+  Admin: 2,
 } as const;
 
 export const PERMISSIONS = {
   CLIENT: {
-    CREATE: 'client:create',
-    READ: 'client:read',
-    UPDATE: 'client:update',
-    DELETE: 'client:delete',
-    ALL: 'client:*',
+    SINGLE_ANALYZE: 'cv:single_analyze',
+    BULK_ANALYZE: 'cv:bulk_analyze',
+    READ_ANALYZE: 'cv:read_analyze',
+
+    READ_CV: 'cv:read',
+    UPDATE_CV: 'cv:update',
+    CREATE_CV: 'cv:create',
+    DELETE_CV: 'cv:delete',
+
+    CREATE_JOBDESC: 'jobdesc:create',
+    READ_JOBDESC: 'jobdesc:read',
+    UPDATE_JOBDESC: 'jobdesc:update',
+    DELETE_JOBDESC: 'jobdesc:delete',
+
+    READ_HISTORIES: 'histories:read',
+    UPDATE_HISTORIES: 'histories:update',
+    CREATE_HISTORIES: 'histories:create',
+    DELETE_HISTORIES: 'histories:delete',
   },
-  CUSTOMER: {
-    READ_PROFILE: 'customer:read_profile',
-
-    CREATE_ORDER: 'customer:create_order',
-    READ_ORDER: 'customer:read_order',
-    UPDATE_ORDER: 'customer:update_order',
-    DELETE_ORDER: 'customer:delete_order',
-
-    CREATE: 'customer:create',
-    READ: 'customer:read',
-    UPDATE: 'customer:update',
-    DELETE: 'customer:delete',
-
-    ALL: 'customer:*',
+  ADMIN: {
+    READ_CLIENT: 'client:read',
+    UPDATE_CLIENT: 'client:update',
+    CREATE_CLIENT: 'client:create',
+    DELETE_CLIENT: 'client:delete',
   },
 } as const;

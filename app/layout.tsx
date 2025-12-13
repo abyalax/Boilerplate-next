@@ -1,22 +1,16 @@
 import { dehydrate } from '@tanstack/react-query';
-import './globals.css';
+import './styles/index.css';
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { PropsWithChildren } from 'react';
 
 import { QueryKey } from '~/common/const/querykey';
 import { Providers } from '~/components/provider/application';
-import { Permission, Role } from '~/db/schema';
 import { getQueryClient } from '~/lib/query/client';
+import { Permission, Role } from '~/modules/users/users.type';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+export const font = Inter({
   subsets: ['latin'],
 });
 
@@ -75,7 +69,7 @@ export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
   const queryClient = getQueryClient();
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${font.className} antialiased`}>
         <Providers dehydratedState={dehydrate(queryClient)}>{children}</Providers>
       </body>
     </html>

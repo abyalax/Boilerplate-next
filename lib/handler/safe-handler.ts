@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 import { env } from '~/common/const/credential';
-import { Permission } from '~/db/schema';
 
 import { handlers } from './handler';
 
@@ -13,7 +12,7 @@ export function safeHandler<TParams extends Record<string, unknown>>(handler: Ha
   return async (req: NextRequest, context: { params: Promise<TParams> }) => {
     try {
       const token = await getToken({ req, secret: env.JWT_SECRET });
-      const userPermissions: string[] = token?.permissions?.map((p: Permission) => p.key) || [];
+      const userPermissions: string[] = token?.permissions?.map((p) => p.key) || [];
       if (permissions?.length > 0) {
         const hasPermission = permissions.every((p) => userPermissions.includes(p));
         if (!hasPermission)
@@ -33,7 +32,7 @@ export function safeHandler<TParams extends Record<string, unknown>>(handler: Ha
           return NextResponse.json({ message: res.message, error: res.error }, { status: res.status });
         }
       }
-      console.error('[Unhandled Error]: ', err);
+      console.error('[Unhandle Error]: ', err);
       return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
   };

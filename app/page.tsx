@@ -1,12 +1,11 @@
 import { Metadata } from 'next';
-
 import { env } from '~/common/const/credential';
-
 import { PageLanding } from './_components/page-landing';
+import './styles/index.css';
 
 export const metadata: Metadata = {
-  title: "Abya's Profile",
-  description: "Explore Abya's personal website showcasing development projects, technical blogs, and more.",
+  title: "Abya's AnaliticaCV",
+  description: 'Your personal analytics dashboard for CVs.',
   authors: [{ name: 'Abya Lacks', url: env.NEXT_PUBLIC_BASE_URL_API }],
   keywords: ['Profile Developer', 'Personal Website', 'Fullstack Developer', 'Abya Lacks', 'Software Engineer Portfolio'],
   creator: 'Abya Lacks',
@@ -51,7 +50,7 @@ export const metadata: Metadata = {
 
 export const permissions = [];
 
-export default async function Home() {
+export default async function Page() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   return <PageLanding />;
 }

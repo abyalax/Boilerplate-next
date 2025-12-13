@@ -5,27 +5,27 @@ import { PageScreen } from '~/components/layouts/page';
 import { Component } from './_components';
 
 export const metadata: Metadata = {
-  title: 'Create Customer | Admin Dashboard',
-  description: 'Add a new Customer and assign roles & permissions in the system.',
-  keywords: ['create Customer', 'admin', 'dashboard', 'roles', 'permissions'],
+  title: 'Create CV | Admin Dashboard',
+  description: 'Add a new CV and assign roles & permissions in the system.',
+  keywords: ['create CV', 'admin', 'dashboard', 'roles', 'permissions'],
   openGraph: {
-    title: 'Create Customer - Admin Dashboard',
-    description: 'Add a new Customer and assign roles & permissions in the system.',
+    title: 'Create CV - Admin Dashboard',
+    description: 'Add a new CV and assign roles & permissions in the system.',
     type: 'website',
-    url: '/admin/Customer/create',
+    url: '/admin/CV/create',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Create Customer Page',
+        alt: 'Create CV Page',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Create Customer - Admin Dashboard',
-    description: 'Add a new Customer and assign roles & permissions in the system.',
+    title: 'Create CV - Admin Dashboard',
+    description: 'Add a new CV and assign roles & permissions in the system.',
     images: ['/og-image.png'],
   },
 };

@@ -8,22 +8,14 @@ export const QUERY_KEY = {
     FORGOT_PASSWORD: 'forgot_password',
     RESET_PASSWORD: 'reset_password',
   },
-  CUSTOMER: {
-    GETS: 'get_customers',
-    GET_BY_ID: 'get_customer_by_id',
+  CV: {
+    GETS: 'get_cvs',
+    GET_BY_ID: 'get_cv_by_id',
 
-    CREATE: 'create_customer',
-    UPDATE: 'update_customer',
-    DELETE: 'delete_customer',
-
-    GET_PROFILE: 'get_profile',
-
-    GET_ORDER: 'get_order',
-    CREATE_ORDER: 'create_order',
-    UPDATE_ORDER: 'update_order',
-    DELETE_ORDER: 'delete_order',
+    CREATE: 'create_cv',
+    UPDATE: 'update_cv',
+    DELETE: 'delete_cv',
   },
-
   CLIENT: {
     GETS: 'get_clients',
     GET_BY_ID: 'get_client_by_id',

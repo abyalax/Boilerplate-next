@@ -1,23 +1,14 @@
 'use client';
 
 import { FC } from 'react';
-
-import { ROLEIDS } from '~/common/const/permission';
 import { Flex } from '~/components/layouts/flex';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
-
 import { FormClient } from '../../_components/form';
 import { FormDataClient } from '../../_components/form/schema';
-import { useCreateClient } from '../../_hooks/use-create-client';
 
 export const Component: FC = () => {
-  const { mutate, isPending } = useCreateClient();
-
   const handleSubmit = (data: FormDataClient) => {
-    mutate({
-      ...data,
-      roleId: ROLEIDS['Client Admin'],
-    });
+    console.log(data);
   };
 
   return (
@@ -28,7 +19,7 @@ export const Component: FC = () => {
           <CardDescription>Please provide basic details for the new client.</CardDescription>
         </CardHeader>
         <CardContent>
-          <FormClient onSubmit={handleSubmit} buttonText="Create Client" isLoading={isPending} />
+          <FormClient onSubmit={handleSubmit} buttonText="Create Client" />
         </CardContent>
       </Card>
     </Flex>

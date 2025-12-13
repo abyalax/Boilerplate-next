@@ -1,6 +1,6 @@
 import { ComponentProps, CSSProperties, FC, PropsWithChildren } from 'react';
 
-export interface FlexProps extends PropsWithChildren<ComponentProps<'div'>> {
+interface FlexProps extends PropsWithChildren<ComponentProps<'div'>> {
   justify?: CSSProperties['justifyContent'];
   align?: CSSProperties['alignItems'];
   wrap?: CSSProperties['flexWrap'];

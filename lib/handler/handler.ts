@@ -1,10 +1,14 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <> */
-import { DrizzleError, DrizzleQueryError } from 'drizzle-orm';
+
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/client';
 import { JsonWebTokenError, NotBeforeError, TokenExpiredError } from 'jsonwebtoken';
 import { ZodError } from 'zod';
-
 import { Message } from '~/common/types/response';
-
 import { HttpException } from './error';
 
 type ErrorConstructor<T extends Error = Error> = new (...args: any[]) => T;
@@ -16,9 +20,9 @@ type ExceptionHandler<T = any> = (e: T) => {
 
 export const handlers = new Map<ErrorConstructor, ExceptionHandler>([
   [
-    DrizzleQueryError,
-    (e: DrizzleQueryError) => {
-      console.log('DrizzleQueryError: ', e.message);
+    PrismaClientKnownRequestError,
+    (e: PrismaClientKnownRequestError) => {
+      console.log('PrismaClientKnownRequestError: ', e);
       return {
         status: 401,
         message: Message.DATABASE_QUERY_FAILED,
@@ -70,14 +74,35 @@ export const handlers = new Map<ErrorConstructor, ExceptionHandler>([
       };
     },
   ],
-
   [
-    DrizzleError,
-    (e: DrizzleError) => {
-      console.log('DrizzleError: ', e.message);
+    PrismaClientRustPanicError,
+    (e: PrismaClientRustPanicError) => {
+      console.log('PrismaClientRustPanicError: ', e);
       return {
-        status: 422,
-        message: Message.ENTITY_NOT_FOUND,
+        status: 500,
+        message: Message.DATABASE_ERROR,
+        error: e.message,
+      };
+    },
+  ],
+  [
+    PrismaClientValidationError,
+    (e: PrismaClientValidationError) => {
+      console.log('PrismaClientValidationError: ', e);
+      return {
+        status: 500,
+        message: Message.DATABASE_ERROR,
+        error: e.message,
+      };
+    },
+  ],
+  [
+    PrismaClientUnknownRequestError,
+    (e: PrismaClientUnknownRequestError) => {
+      console.log('PrismaClientUnknownRequestError: ', e);
+      return {
+        status: 500,
+        message: Message.DATABASE_ERROR,
         error: e.message,
       };
     },

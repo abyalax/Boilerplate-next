@@ -20,7 +20,9 @@ export const ColumnVisibilitySelector = <T,>({ table, columnIds }: ColumnSelecto
     .map(([key]) => key);
 
   const handleOnChange = (e: boolean, id: string | undefined) => {
-    const selectedOptions = e ? [...columnVisibilityCheckboxState, id] : columnVisibilityCheckboxState.filter((key) => key !== id);
+    const selectedOptions = e
+      ? [...columnVisibilityCheckboxState, id]
+      : columnVisibilityCheckboxState.filter((key) => key !== id);
     table.setColumnVisibility(
       columnIds.reduce((acc: { [id: string]: boolean }, val) => {
         acc[val ?? ''] = selectedOptions.includes(val);
@@ -33,7 +35,7 @@ export const ColumnVisibilitySelector = <T,>({ table, columnIds }: ColumnSelecto
       <Tooltip>
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" className="cursor-pointer">
               <FaEye size={20} />
             </Button>
           </PopoverTrigger>

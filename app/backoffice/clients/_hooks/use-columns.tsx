@@ -2,9 +2,9 @@ import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { FaPencilAlt, FaTrash } from 'react-icons/fa';
+import { toast } from 'sonner';
 import { Checkbox } from '~/components/ui/checkbox';
-import { User } from '~/db/schema';
-import { useDeleteClient } from './use-delete-client';
+import { User } from '~/modules/users/users.type';
 
 const columnHelper = createColumnHelper<User>();
 export type TUserColumn = keyof User | 'select' | 'action';
@@ -14,8 +14,6 @@ type Params = {
 };
 
 export const useColumns = ({ defaultVisible }: Params) => {
-  const { mutate: deleteClient } = useDeleteClient();
-
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -52,14 +50,18 @@ export const useColumns = ({ defaultVisible }: Params) => {
         header: 'Action',
         cell: (info) => (
           <div className="flex items-center gap-2">
-            <Link href={`/backoffice/clients/${info.row.original.id}`} onClick={(e) => e.stopPropagation()} className="text-gray-700 hover:text-blue-600">
+            <Link
+              href={`/backoffice/clients/${info.row.original.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-gray-700 hover:text-blue-600"
+            >
               <FaPencilAlt />
             </Link>
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                deleteClient(info.row.original.id.toString());
+                toast(`Delete Client with id: ${info.row.original.id.toString()}`);
               }}
               className="text-red-600 hover:text-red-800"
             >
@@ -69,7 +71,7 @@ export const useColumns = ({ defaultVisible }: Params) => {
         ),
       }),
     ],
-    [deleteClient],
+    [],
   );
 
   const columnIds = useMemo(() => columns.map((col) => col.id), [columns]);

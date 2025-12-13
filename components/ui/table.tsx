@@ -5,7 +5,7 @@ import { ComponentProps, FC } from 'react';
 import { cn } from '~/lib/utils';
 
 export const Table: FC<ComponentProps<'table'>> = ({ className, ...props }) => (
-  <div data-slot="table-container" className="relative w-full overflow-x-auto">
+  <div data-slot="table-container" className="w-full">
     <table data-slot="table" className={cn('w-full caption-bottom text-sm', className)} {...props} />
   </div>
 );
@@ -19,11 +19,19 @@ export const TableBody: FC<ComponentProps<'tbody'>> = ({ className, ...props }) 
 );
 
 export const TableFooter: FC<ComponentProps<'tfoot'>> = ({ className, ...props }) => (
-  <tfoot data-slot="table-footer" className={cn('bg-muted/50 border-t font-medium [&>tr]:last:border-b-0', className)} {...props} />
+  <tfoot
+    data-slot="table-footer"
+    className={cn('bg-muted/50 border-t font-medium [&>tr]:last:border-b-0', className)}
+    {...props}
+  />
 );
 
 export const TableRow: FC<ComponentProps<'tr'>> = ({ className, ...props }) => (
-  <tr data-slot="table-row" className={cn('hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors', className)} {...props} />
+  <tr
+    data-slot="table-row"
+    className={cn('hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors', className)}
+    {...props}
+  />
 );
 
 export const TableHead: FC<ComponentProps<'th'>> = ({ className, ...props }) => (
@@ -40,7 +48,10 @@ export const TableHead: FC<ComponentProps<'th'>> = ({ className, ...props }) => 
 export const TableCell: FC<ComponentProps<'td'>> = ({ className, ...props }) => (
   <td
     data-slot="table-cell"
-    className={cn('p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]', className)}
+    className={cn(
+      'p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+      className,
+    )}
     {...props}
   />
 );

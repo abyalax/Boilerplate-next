@@ -1,4 +1,5 @@
 import type { AxiosResponse } from 'axios';
+import { NextResponse } from 'next/server';
 
 export const Message = {
   TOKEN_NOT_FOUND: 'Token Not Found',
@@ -25,3 +26,4 @@ export type TResponse<T = unknown> = {
 };
 
 export type TAxiosResponse<T = unknown> = AxiosResponse<TResponse<T>>;
+export type TNextResponse<T = unknown> = Promise<NextResponse<TResponse<T>>>;

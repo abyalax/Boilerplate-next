@@ -1,5 +1,7 @@
 # Boilerplate NextJS Project
 
+https://lovable.dev/projects/117f2aad-b150-423f-b34f-72dc167060e8?view=design
+
 ## Prerequisites
 
 - Node.js >= 22

@@ -1,11 +1,10 @@
-import { routePermissions } from './lib/routes/permissions';
 import { NextRequest, NextResponse } from 'next/server';
-import { env } from './common/const/credential';
-import { Permission } from '~/db/schema';
 import { getToken } from 'next-auth/jwt';
+import { env } from './common/const/credential';
+import { routePermissions } from './lib/routes/permissions';
 import { matchPermission } from './lib/utils';
 
-const publicRoutes = ['/auth/register', '/auth/login', '/auth/forgot-password', '/auth/reset-password'];
+const publicRoutes = new Set(['/auth/register', '/auth/login', '/auth/forgot-password', '/auth/reset-password']);
 
 function getRequiredPermissions(pathname: string): string[] {
   if (routePermissions[pathname]) return routePermissions[pathname];
@@ -23,7 +22,9 @@ function matchesPattern(pathname: string, pattern: string): boolean {
   if (pattern.endsWith('*')) {
     // Catch-all route [...slug]
     const basePattern = patternSegments.slice(0, -1);
-    return pathSegments.length >= basePattern.length && basePattern.every((seg, i) => seg.startsWith(':') || seg === pathSegments[i]);
+    return (
+      pathSegments.length >= basePattern.length && basePattern.every((seg, i) => seg.startsWith(':') || seg === pathSegments[i])
+    );
   }
   if (pathSegments.length !== patternSegments.length) return false;
   return patternSegments.every((seg, i) => seg.startsWith(':') || seg === pathSegments[i]);
@@ -35,9 +36,9 @@ export async function middleware(req: NextRequest) {
     const pathname = req.nextUrl.pathname;
     // ✅ Skip middleware untuk NextAuth API routes
     if (pathname.startsWith('/api/auth')) return NextResponse.next();
-    if (publicRoutes.includes(pathname)) return NextResponse.next();
+    if (publicRoutes.has(pathname)) return NextResponse.next();
     const token = await getToken({ req, secret: env.JWT_SECRET });
-    const userPermissions: string[] = token?.permissions?.map((p: Permission) => p.key) || [];
+    const userPermissions: string[] = token?.permissions?.map((p) => p.key) || [];
     const requiredPermissions = getRequiredPermissions(pathname);
     const method = req.method;
     console.log(` ${method} ${pathname} 🔑 Required permissions: `, requiredPermissions);

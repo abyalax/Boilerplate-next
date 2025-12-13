@@ -1,14 +1,11 @@
-version: "3.9"
-
 services:
   postgres:
-    image: postgres:16
-    container_name: boilerplate_next
-    restart: always
+    image: postgres:15
+    restart: no
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: postgress_pass
-      POSTGRES_DB: db_next
+      POSTGRES_USER: boilerplate
+      POSTGRES_PASSWORD: boilerplate
+      POSTGRES_DB: db_boilerplate_cv
     ports:
       - "5432:5432"
     volumes:

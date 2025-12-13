@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export type Params = Record<string, string | number | null | undefined>;
+export type Params = Record<string, string | number | null | undefined | boolean>;
 export type Updater<T> = T | ((_prev: T) => T);
 
 export interface NavigateOptions<T = Params> {

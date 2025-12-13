@@ -60,5 +60,5 @@ export function useSearch<TSchema extends z.ZodSchema>(schema: TSchema) {
     }
   }, [searchParams, router, pathname, parsed, hasValidationError]);
 
-  return parsed as z.core.output<TSchema>;
+  return parsed;
 }

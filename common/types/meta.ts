@@ -7,15 +7,16 @@ export const paginationSchema = z.object({
 
 export type Pagination = z.infer<typeof paginationSchema>;
 
-export const sortingSchema = (fields: string[]) =>
-  z.object({
-    sort_by: z.enum([...fields]).optional(),
-    sort_order: z.enum(['ASC', 'DESC']).optional(),
-  });
+export const sortingSchema = z.object({
+  sort_by: z.string().optional(),
+  sort_order: z.enum(['asc', 'desc']).optional(),
+});
 
-interface Sorting<E> {
+export type SortOrder = 'asc' | 'desc';
+
+export interface Sorting<E> {
   sort_by?: keyof E | string;
-  sort_order?: 'ASC' | 'DESC';
+  sort_order?: SortOrder;
 }
 
 export const globalFilterSchema = z.object({
@@ -27,6 +28,7 @@ type GlobalFilter = z.infer<typeof globalFilterSchema>;
 export const metaRequestSchema = z.object({
   ...paginationSchema.shape,
   ...globalFilterSchema.shape,
+  ...sortingSchema.shape,
 });
 
 export interface MetaRequest<E = undefined> extends Pagination, Sorting<E>, GlobalFilter {}
