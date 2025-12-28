@@ -1,14 +1,16 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-12-28T03:57:16.180Z
+// Generated at: 2025-12-28T04:52:43.332Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
+  '/[clientId]/': ['cv:read'],
   '/[clientId]/cv/': ['cv:read'],
   '/backoffice/clients/': [],
   '/[clientId]/cv/create/': ['cv:read', 'cv:create'],
   '/backoffice/clients/[clientId]/': ['client:read'],
   '/[clientId]/cv/[cvId]/update/': ['cv:read', 'cv:update'],
-  '/[clientId]': [],
+  '/[clientId]': ['cv:read'],
+  '/:clientId/': ['cv:read'],
   '/[clientId]/cv': ['cv:read'],
   '/:clientId/cv/': ['cv:read'],
   '/backoffice': [],
