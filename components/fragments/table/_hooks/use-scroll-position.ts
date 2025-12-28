@@ -1,9 +1,8 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 
-export function useScrollLeft(ref: React.RefObject<HTMLElement | null>) {
+export function useScrollPosition(ref: React.RefObject<HTMLElement | null>) {
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
 
   useEffect(() => {
     const el = ref.current;
@@ -14,11 +13,13 @@ export function useScrollLeft(ref: React.RefObject<HTMLElement | null>) {
       if (rafId) cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         setScrollLeft(el.scrollLeft);
+        setScrollTop(el.scrollTop);
       });
     };
 
     el.addEventListener('scroll', onScroll, { passive: true });
     setScrollLeft(el.scrollLeft);
+    setScrollTop(el.scrollTop);
 
     return () => {
       el.removeEventListener('scroll', onScroll);
@@ -26,5 +27,5 @@ export function useScrollLeft(ref: React.RefObject<HTMLElement | null>) {
     };
   }, [ref]);
 
-  return scrollLeft;
+  return { scrollLeft, scrollTop };
 }

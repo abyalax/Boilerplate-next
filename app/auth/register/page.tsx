@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   keywords: 'Register, sign up, authentication, secure access',
 };
 
-export const permissions = [];
-
 export default function Page() {
   return <PageRegister />;
 }

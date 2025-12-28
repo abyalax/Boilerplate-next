@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, Fragment, PropsWithChildren, ReactNode } from 'react';
+import { FC, PropsWithChildren, ReactNode } from 'react';
 import { BreadcrumbProps, Breadcrumbs } from '~/app/_components/ui/app-breadcrumbs';
 import { ToggleTheme } from '~/app/_components/ui/toggle-theme';
 import { SidebarApp } from '~/components/fragments/sidebar/sidebar-app';
@@ -13,13 +13,13 @@ import { Flex } from './flex';
 import { Header } from './header';
 import { Main } from './main';
 
-interface PageScreenProps extends PropsWithChildren {
+interface Props extends PropsWithChildren {
   title: string;
   breadcrumbs: BreadcrumbProps[];
   topActions?: ReactNode;
 }
 
-export const PageScreen: FC<PageScreenProps> = ({ title, breadcrumbs, children, topActions }) => {
+export const PageScreen: FC<Props> = ({ title, breadcrumbs, children, topActions }) => {
   return (
     <SidebarProvider>
       <SidebarApp />
@@ -30,7 +30,6 @@ export const PageScreen: FC<PageScreenProps> = ({ title, breadcrumbs, children, 
           // If layout is fixed, set the height
           // to 100svh to prevent overflow
           'has-data-[layout=fixed]:h-svh',
-
           // If layout is fixed and sidebar is inset,
           // set the height to 100svh - spacing (total margins) to prevent overflow
           'peer-data-[variant=inset]:has-data-[layout=fixed]:h-[calc(100svh-(var(--spacing)*4))]',

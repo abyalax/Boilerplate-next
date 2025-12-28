@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   keywords: 'Order, dashboard, home, overview, user panel',
 };
 
-export const permissions = [];
-
 export default async function Page() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   return <PageOrder />;

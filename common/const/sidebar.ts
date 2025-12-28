@@ -1,4 +1,4 @@
-import { Gpu, HelpCircle, History, Home, LayoutDashboard, ListTodo, Notebook, SaveAll, Settings, Table2 } from 'lucide-react';
+import { HelpCircle, Home, LayoutDashboard, Notebook, Settings, Table2 } from 'lucide-react';
 import { PERMISSIONS } from '~/common/const/permission';
 import { MenuGroup, MenuItem } from '~/components/fragments/sidebar/sidebar-app';
 import { url } from '~/lib/utils/converter';
@@ -14,31 +14,7 @@ export const sidebarItems = (clientId: string): MenuGroup[] => [
         permissions: [PERMISSIONS.CLIENT.READ_ANALYZE],
       },
       {
-        title: 'Analyze CV',
-        url: url('/[clientId]/analyze', { clientId }),
-        icon: Gpu,
-        permissions: [PERMISSIONS.CLIENT.READ_ANALYZE], //  TODO:  Adjust to only ANALYZE
-      },
-      {
-        title: 'Job Descriptions',
-        url: `/${clientId}/jobs`,
-        icon: ListTodo,
-        permissions: [PERMISSIONS.CLIENT.READ_JOBDESC],
-      },
-      {
-        title: 'Histories',
-        url: `/${clientId}/histories`,
-        icon: History,
-        permissions: [PERMISSIONS.CLIENT.READ_ANALYZE],
-      },
-      {
-        title: 'Saved CV',
-        url: `/${clientId}/saved`,
-        icon: SaveAll,
-        permissions: [PERMISSIONS.CLIENT.READ_CV],
-      },
-      {
-        title: 'Manage CV',
+        title: 'Curriculum Vitae',
         url: url('/[clientId]/cv', { clientId }),
         icon: Table2,
         permissions: [PERMISSIONS.CLIENT.READ_CV],

@@ -1,3 +1,4 @@
+import { FormDataCV } from '~/app/[clientId]/cv/_components/form/schema-cv';
 import { TAxiosResponse } from '~/common/types/response';
 import { api } from '~/lib/axios/api';
 import { ReturnExtracted } from '~/lib/pdf/client';
@@ -14,7 +15,10 @@ export const getCV = (clientId: string, cvId: string): Promise<TAxiosResponse<CV
   return api.get(_endpoint);
 };
 
-export const createCV = (clientId: string, payload: CV) => {};
+export const createCV = (clientId: string, payload: FormDataCV) => {
+  const _endpoint = endpoint('/api/[clientId]/cv', { clientId });
+  return api.post(_endpoint, payload);
+};
 
 export const updateCV = (clientId: string, cvId: string, payload: PayloadCV) => {
   const _endpoint = endpoint('/api/[clientId]/cv/[cvId]', { clientId, cvId });

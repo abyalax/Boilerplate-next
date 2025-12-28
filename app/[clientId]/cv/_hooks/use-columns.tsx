@@ -1,4 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table';
+import { ChevronDownCircleIcon, ChevronDownIcon, ChevronRightCircleIcon, ChevronRightIcon, ChevronUpIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import { Checkbox } from '~/components/ui/checkbox';
 import { CV } from '~/modules/cv/cv.type';
@@ -42,18 +43,6 @@ export const useColumns = (params?: Params) => {
         size: 200,
         footer: 'Name',
       }),
-      columnHelper.accessor('email', {
-        id: 'email',
-        header: 'Email',
-      }),
-      columnHelper.accessor('about', {
-        id: 'about',
-        header: 'Description',
-      }),
-      columnHelper.accessor('address', {
-        id: 'address',
-        header: 'Address',
-      }),
       columnHelper.accessor('certificate.title', {
         id: 'certificate',
         header: 'Sertifikat',
@@ -73,6 +62,21 @@ export const useColumns = (params?: Params) => {
         id: 'action',
         header: 'Action',
         cell: (info) => <ActionColumn record={info.row.original} />,
+      }),
+      columnHelper.display({
+        id: 'expander',
+        header: '',
+        cell: ({ row }) => (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              row.toggleExpanded();
+              console.log(row.getIsExpanded());
+            }}
+          >
+            {row.getIsExpanded() ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          </button>
+        ),
       }),
     ],
     [],

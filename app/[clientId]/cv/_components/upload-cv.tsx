@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { TFile, Upload } from '~/components/fragments/input/upload';
 import { Modal } from '~/components/fragments/modal/modal';
 import { Button } from '~/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import { useUploadCV } from '../_hooks/use-upload-cv';
 
 export const UploadCV = () => {
@@ -17,10 +18,18 @@ export const UploadCV = () => {
 
   return (
     <Modal
-      textOpen="Uplad New CV"
       textCancel={<Button variant={'outline'}>Cancel</Button>}
       textAction={<Button onClick={handleUpload}>Upload CV</Button>}
-      iconOpen={<UploadIcon />}
+      buttonOpen={
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={'outline'}>
+              <UploadIcon />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Upload CV</TooltipContent>
+        </Tooltip>
+      }
       title="Upload CV"
       content={<Upload multiple files={files} setFiles={setFiles} mode="drag" showFileList />}
     />

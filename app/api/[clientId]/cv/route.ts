@@ -7,8 +7,6 @@ import { cvService } from '~/modules/cv/cv.service';
 import { CV } from '~/modules/cv/cv.type';
 import { ClientId } from '~/modules/users/users.type';
 
-export const permissions = [];
-
 export const GET = safeHandler<ClientId>(async (req, { params }) => {
   const { clientId } = await params;
 

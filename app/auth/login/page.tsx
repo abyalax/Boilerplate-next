@@ -7,8 +7,6 @@ export const metadata: Metadata = {
   keywords: 'login, sign in, authentication, secure access',
 };
 
-export const permissions = [];
-
 export default function Page() {
   return <PageLogin />;
 }

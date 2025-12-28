@@ -4,11 +4,11 @@ import { PageScreen } from '~/components/layouts/page';
 import { getQueryClient } from '~/lib/query/client';
 import { url } from '~/lib/utils/converter';
 import { CV } from '~/modules/cv/cv.type';
+import { queryGetCVs } from '../_hooks/use-get-list-cv';
 import { Component } from './_components';
-import { queryGetCVs } from './_hooks/use-get-list-cv';
 
 export const metadata: Metadata = {
-  title: 'Curriculum Vitae',
+  title: 'Create CV',
 };
 
 const breadcrumbItems = (clientId: string) => [
@@ -18,18 +18,18 @@ const breadcrumbItems = (clientId: string) => [
     active: false,
   },
   {
-    title: 'Dashboard',
+    title: 'CV',
     url: url('/[clientId]/dashboard', { clientId }),
     active: false,
   },
   {
-    title: 'CV',
-    url: url('/[clientId]/cv', { clientId }),
+    title: 'Create',
+    url: url('/[clientId]/cv/create', { clientId }),
     active: true,
   },
 ];
 
-type Props = PageProps<'/[clientId]/cv'>;
+type Props = PageProps<'/[clientId]/cv/create'>;
 
 export default async function Page({ params, searchParams }: Props) {
   const querySearch = await searchParams;
@@ -48,7 +48,7 @@ export default async function Page({ params, searchParams }: Props) {
   const breadcrumbs = breadcrumbItems(clientId);
 
   return (
-    <PageScreen title="Curriculum Vitae" breadcrumbs={breadcrumbs}>
+    <PageScreen title="Create CV" breadcrumbs={breadcrumbs}>
       <Component />
     </PageScreen>
   );

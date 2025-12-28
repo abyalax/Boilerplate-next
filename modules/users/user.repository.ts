@@ -3,13 +3,9 @@ import { Prisma } from '~/generated/prisma/client';
 import { Repository } from '../base/repositories';
 import { UserMapper } from './users.map';
 
-export class UserRepository extends Repository<
-  Prisma.usersDelegate,
-  Prisma.usersWhereInput,
-  Prisma.usersOrderByWithRelationInput
-> {
+export class UserRepository extends Repository<Prisma.UserDelegate, Prisma.UserWhereInput, Prisma.UserOrderByWithRelationInput> {
   constructor() {
-    super(prisma.users);
+    super(prisma.user);
   }
 
   _getModel() {
@@ -22,8 +18,8 @@ export class UserRepository extends Repository<
     });
   }
 
-  async findWithRolesAndPermissions(where: Prisma.usersWhereUniqueInput) {
-    const user = await prisma.users.findUniqueOrThrow({
+  async findWithRolesAndPermissions(where: Prisma.UserWhereUniqueInput) {
+    const user = await prisma.user.findUniqueOrThrow({
       where,
       include: {
         user_roles: {

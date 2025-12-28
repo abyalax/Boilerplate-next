@@ -81,7 +81,7 @@ export function SidebarApp({ user = { name: 'John Doe', email: 'john@example.com
         <div className="flex items-center gap-3">
           {state !== 'collapsed' && (
             <div className="flex flex-col min-w-0">
-              <span className="font-semibold text-sm truncate">Analytica CVs</span>
+              <span className="font-semibold text-sm truncate">Boilerplate Next</span>
               <span className="text-xs text-muted-foreground">v1.0.0</span>
             </div>
           )}

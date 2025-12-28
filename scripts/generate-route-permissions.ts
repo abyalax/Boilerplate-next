@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import chokidar from 'chokidar';
 import { glob } from 'glob';
 
@@ -7,38 +8,35 @@ async function generateRoutePermissions() {
   const basePermissions: Record<string, string[]> = {};
   const hierarchicalPermissions: Record<string, string[]> = {};
 
-  const pageFiles = await glob('**/page.{ts,tsx}', {
+  const metaFiles = await glob('**/_meta.ts', {
     cwd: path.join(process.cwd(), 'app'),
     ignore: ['**/node_modules/**', '**/.next/**'],
   });
 
-  const routeFiles = await glob('**/route.{ts,tsx}', {
-    cwd: path.join(process.cwd(), 'app'),
-    ignore: ['**/node_modules/**', '**/.next/**'],
-  });
+  console.log(`Found ${metaFiles.length} _meta.ts files`);
 
-  const allFiles = [...pageFiles, ...routeFiles];
-  console.log(`Found ${pageFiles.length} page files and ${routeFiles.length} route files`);
   // Step 1: Collect base permissions from files
-  for (const relativeFile of allFiles) {
+  for (const relativeFile of metaFiles) {
     const absolutePath = path.join(process.cwd(), 'app', relativeFile);
 
     try {
-      delete require.cache[require.resolve(absolutePath)];
-      const mod = await import(`${absolutePath}?update=${Date.now()}`);
-      const parsed = relativeFile.replace(/(\/)?(page|route)\.(ts|tsx)$/, '');
-      const routePath = parsed === '' ? '/' : `/${parsed}`;
+      const fileUrl = pathToFileURL(absolutePath).href;
+      const mod = await import(`${fileUrl}?update=${Date.now()}`);
 
-      if (mod.permissions) {
-        basePermissions[routePath] = mod.permissions;
+      const parsed = relativeFile.replace(/(\/)?(_meta.ts)$/, '');
+      const routePath = parsed === '' ? '/' : `/${parsed.replace(/\\/g, '/')}`;
+
+      if (Array.isArray(mod.default.permissions)) {
+        basePermissions[routePath] = mod.default.permissions;
       } else {
         basePermissions[routePath] = [];
-        console.log(`⚠️  No permissions found in ${relativeFile}`);
+        console.warn(`⚠️  No permissions exported in ${relativeFile}`);
       }
     } catch (e) {
       console.error(`❌ Error processing ${relativeFile}:`, (e as Error).message);
     }
   }
+
   // Step 2: Generate all possible route patterns including dynamic routes
   const allRoutes = new Set<string>();
   // Add base routes
@@ -121,17 +119,20 @@ function matchesDynamicRoute(pathname: string, routePattern: string): boolean {
   if (routePattern.includes('[...')) {
     const beforeCatchAll = routeSegments.findIndex((seg) => seg.includes('[...'));
     const staticParts = routeSegments.slice(0, beforeCatchAll);
-    return pathSegments.length >= staticParts.length && staticParts.every((seg, i) => seg.includes('[') || seg === pathSegments[i]);
+    return (
+      pathSegments.length >= staticParts.length && staticParts.every((seg, i) => seg.includes('[') || seg === pathSegments[i])
+    );
   }
 
   if (pathSegments.length !== routeSegments.length) return false;
   return routeSegments.every((seg, i) => seg.includes('[') || seg === pathSegments[i]);
 }
 
-export function watchForChanges(): void {
+function watchForChanges(): void {
   const appDir = path.join(process.cwd(), 'app');
   const DebounceTime = 1000;
   let timeout: NodeJS.Timeout | null = null;
+
   const debouncedRegenerate = () => {
     if (timeout) clearTimeout(timeout);
     timeout = setTimeout(async () => {
@@ -139,17 +140,17 @@ export function watchForChanges(): void {
       await generateRoutePermissions();
     }, DebounceTime);
   };
+
   const watcher = chokidar.watch(appDir, {
-    ignored: /node_modules|(^|\/)\.[^/]+/, // ignore folder yang berat dan hidden
+    ignored: /node_modules|(^|\/)\.[^/]+/,
     persistent: true,
-    ignoreInitial: true, // jangan trigger event saat start
+    ignoreInitial: true,
   });
+
   watcher.on('all', (event, filePath) => {
-    if (filePath.endsWith('.ts') || filePath.endsWith('.tsx')) {
-      if (filePath.includes('page.') || filePath.includes('route.')) {
-        console.log(`🔔 ${event} detected: ${filePath}`);
-        debouncedRegenerate();
-      }
+    if (filePath.endsWith('_meta.ts')) {
+      console.log(`🔔 ${event} detected: ${filePath}`);
+      debouncedRegenerate();
     }
   });
 
@@ -179,4 +180,6 @@ async function main() {
   }
 }
 
-if (require.main === module) main().catch(console.error);
+main().then().catch(console.error);
+
+// if (require.main === module) main().catch(console.error);

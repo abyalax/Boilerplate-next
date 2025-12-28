@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
-
 import { PageScreen } from '~/components/layouts/page';
-
 import { Component } from './_components';
 
 export const metadata: Metadata = {

@@ -1,8 +1,5 @@
-import { PERMISSIONS } from '~/common/const/permission';
 import { PageScreen } from '~/components/layouts/page';
 import { Component } from './_components';
-
-export const permissions = [PERMISSIONS.ADMIN.READ_CLIENT];
 
 const breadcrumbItems = (clientId: string) => [
   {

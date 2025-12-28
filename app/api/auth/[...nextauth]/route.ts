@@ -46,9 +46,11 @@ const options: AuthOptions = {
           if (user === undefined) throw new NotFoundException('User not found');
           const isValid = await bcrypt.compare(credentials.password, user.password);
           if (!isValid) throw new UnauthorizedException('Invalid Password');
+          console.log('user authorized');
+
           return user;
         } else {
-          return null;
+          throw new UnauthorizedException();
         }
       },
     }),
@@ -101,9 +103,9 @@ const options: AuthOptions = {
     },
   },
 
-  pages: {
-    signIn: '/auth/login',
-  },
+  // pages: {
+  //   signIn: '/auth/login',
+  // },
 
   secret: env.NEXT_SECRET,
 };

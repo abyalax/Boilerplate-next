@@ -3,9 +3,9 @@ import { Prisma } from '~/generated/prisma/client';
 import { Repository } from '../base/repositories';
 import { CVMapper } from './cv.map';
 
-export class CVRepository extends Repository<Prisma.cvDelegate, Prisma.cvWhereInput, Prisma.cvOrderByWithRelationInput> {
+export class CVRepository extends Repository<Prisma.CVDelegate, Prisma.CVWhereInput, Prisma.CVOrderByWithRelationInput> {
   constructor() {
-    super(prisma.cv);
+    super(prisma.cV);
   }
 
   async findByID(clientId: number, id: number) {

@@ -18,6 +18,8 @@ import { Button } from '~/components/ui/button';
 type Props = {
   openOn?: 'click' | 'hover';
   iconOpen?: ReactNode;
+  buttonOpen?: ReactNode;
+  buttonAschild?: boolean;
 
   textOpen?: string;
   textCancel?: ReactNode;
@@ -42,10 +44,16 @@ export const Modal: FC<Props> = ({ openOn = 'click', textCancel = 'Cancel', text
   return (
     <AlertDialog {...props} open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="cursor-pointer" variant={'outline'}>
-          {props.iconOpen}
-          {props.textOpen}
-        </Button>
+        {props.buttonOpen !== undefined ? (
+          <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="cursor-pointer">
+            {props.buttonOpen}
+          </div>
+        ) : (
+          <Button onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="cursor-pointer" variant={'outline'}>
+            {props.iconOpen}
+            {props.textOpen}
+          </Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

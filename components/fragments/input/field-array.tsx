@@ -2,43 +2,53 @@
 
 import { X } from 'lucide-react';
 import { FieldValues, Path, PathValue, UseFormReturn } from 'react-hook-form';
+import { ZodType } from 'zod';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Tooltip } from '../modal/tooltip';
 
-interface ArrayInputFieldProps<T extends FieldValues> {
+interface FieldArrayProps<T extends FieldValues> {
   form: UseFormReturn<T>;
+  schema: ZodType;
   name: keyof T & string;
   label: string;
   placeholder?: string;
 }
 
-export const ArrayInputField = <T extends FieldValues>({
-  form,
-  name,
-  label,
-  placeholder = 'Type and press Enter',
-}: ArrayInputFieldProps<T>) => {
-  const values = form.watch(name as Path<T>) || [];
+export const FieldArray = <T extends FieldValues>({ placeholder = 'Type and press Enter', ...props }: FieldArrayProps<T>) => {
+  const values = props.form.watch(props.name as Path<T>) || [];
 
   function addValue(value: string) {
     if (!value.trim()) return;
-    form.setValue(name as Path<T>, [...values, value.trim()] as PathValue<T, Path<T>>);
+    const trimedValue = value.trim();
+    const result = props.schema.safeParse(trimedValue);
+    if (!result.success) {
+      props.form.setError(props.name as Path<T>, {
+        type: 'manual',
+        message: result.error.issues[0].message,
+      });
+      return;
+    }
+    props.form.clearErrors(props.name as Path<T>);
+    props.form.setValue(props.name as Path<T>, [...values, trimedValue] as PathValue<T, Path<T>>, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   }
 
   function removeValue(index: number) {
     const next = [...values];
     next.splice(index, 1);
-    form.setValue(name as Path<T>, next as PathValue<T, Path<T>>);
+    props.form.setValue(props.name as Path<T>, next as PathValue<T, Path<T>>);
   }
 
   return (
     <FormField
-      control={form.control}
-      name={name as Path<T>}
+      control={props.form.control}
+      name={props.name as Path<T>}
       render={() => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel>{props.label}</FormLabel>
           <FormControl>
             <Input
               placeholder={placeholder}

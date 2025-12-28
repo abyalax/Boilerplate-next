@@ -18,11 +18,11 @@ class UserService extends Service<UserRepository> {
     return this.repository.findByEmail(email);
   }
 
-  findUser(where: Prisma.usersWhereUniqueInput) {
+  findUser(where: Prisma.UserWhereUniqueInput) {
     return this.repository.findWithRolesAndPermissions(where);
   }
 
-  create(data: Prisma.usersCreateInput) {
+  create(data: Prisma.UserCreateInput) {
     return this.repository.create(0, data);
   }
 }

@@ -7,8 +7,6 @@ export const metadata: Metadata = {
   keywords: 'Charts, dashboard, home, overview, user panel',
 };
 
-export const permissions = [];
-
 export default async function Page() {
   // simulate delay loading
   await new Promise((resolve) => setTimeout(resolve, 1000));

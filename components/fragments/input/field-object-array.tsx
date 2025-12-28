@@ -12,19 +12,19 @@ interface FieldConfig {
   type?: 'text' | 'textarea' | 'number';
 }
 
-interface ObjectArrayFieldProps<T extends FieldValues, O extends object> {
+interface FieldObjectArrayProps<T extends FieldValues, O extends object> {
   form: UseFormReturn<T>;
   name: keyof T & string;
   label: string;
   shape: { [K in keyof O]: FieldConfig };
 }
 
-export const ObjectArrayField = <T extends FieldValues, O extends object>({
+export const FieldObjectArray = <T extends FieldValues, O extends object>({
   form,
   name,
   label,
   shape,
-}: ObjectArrayFieldProps<T, O>) => {
+}: FieldObjectArrayProps<T, O>) => {
   const items = form.watch(name as Path<T>) || [];
 
   function addItem() {

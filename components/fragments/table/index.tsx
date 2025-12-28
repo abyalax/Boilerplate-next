@@ -5,6 +5,7 @@ import type { ColumnDef, PaginationState, Row, SortingState, Updater } from '@ta
 import {
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
@@ -14,7 +15,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FunnelPlus } from 'lucide-react';
-import { ComponentType, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import { ComponentType, Fragment, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { MetaResponse, metaRequestSchema } from '~/common/types/meta';
 import { useDebouncedCallback } from '~/components/hooks/use-debounce-callback';
@@ -24,9 +25,8 @@ import { Flex } from '~/components/layouts/flex';
 import { Col, Row as RowComponent } from '~/components/layouts/grid';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
-import { Pill } from '~/components/ui/pill';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '~/components/ui/select';
 import {
   TableBody,
   TableCell,
@@ -39,27 +39,35 @@ import {
 import { TablePagination } from '~/components/ui/table-pagination';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import { createFuzzyFilter } from '~/lib/utils';
-import { useCreateStickyColumnStyle } from './_hooks/use-freeze-style';
-import { useScrollLeft } from './_hooks/use-scroll-left';
+import { useScrollPosition } from './_hooks/use-scroll-position';
+import { useCreateStickyColumnStyle } from './_hooks/use-sticky-column-style';
+import { useCreateStickyHeaderStyle } from './_hooks/use-sticky-header-style';
 import { BulkAction, BulkActions } from './_ui/bulk-actions';
 import { ColumnVisibilitySelector } from './_ui/column-visibility';
 import { FacetedFilter } from './_ui/faceted-filter';
 
 export type EngineSide = 'client_side' | 'server_side';
+export type Option = {
+  label: string;
+  value: number;
+};
+export type Options = Option[];
 
-type EnableFeature<T = unknown> = {
+export type TableProps<T> = {
+  bulkActions?: BulkAction[];
+  columns: ColumnDef<T, any>[];
+  columnIds: string[];
+  freezeColumnIds?: string[];
+  data?: { data: T[]; meta: MetaResponse };
+  topActions?: ReactNode;
   virtualizer?: { virtualizeAt: number };
-  columnVisibilitySelector?: {
-    initialColumnVisibility: Record<keyof T, boolean>;
-  };
+  initialColumnVisibility?: Record<keyof T, boolean>;
   engineSide?: EngineSide;
-  pagination?: {
-    perPageOptions?: number[];
-    initialState?: PaginationState;
-  };
+  perPageOptions?: Option[];
+  pagination?: { initialState?: PaginationState } | boolean;
   menufilter?: ReactNode[];
   facetedFilter?: {
-    columnId: string;
+    columnId: keyof T;
     title: string;
     options: {
       label: string;
@@ -67,35 +75,32 @@ type EnableFeature<T = unknown> = {
       icon?: ComponentType<{ className?: string }>;
     }[];
   }[];
+  expandedRow?: (record: T) => ReactNode;
+  onClickRow: (data: T, e?: MouseEvent) => void;
 };
 
-export type TableProps<T> = {
-  enableFeature: EnableFeature<T>;
-  bulkActions?: BulkAction[];
-  columns: ColumnDef<T, any>[];
-  columnIds: string[];
-  freezeColumnIds?: string[];
-  data?: { data: T[]; meta: MetaResponse };
-  topActions?: ReactNode;
-  onClickRow: (data: Row<T>, e?: MouseEvent) => void;
-};
-
-const defaultFeature: EnableFeature<any> = {
-  virtualizer: { virtualizeAt: 1000 },
-  engineSide: 'client_side',
-  pagination: {
-    perPageOptions: [5, 10, 20, 30, 40, 50, 100],
-  },
-};
-
-export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TableProps<T>) => {
-  const [engine] = useState<EngineSide>(enableFeature.engineSide ?? 'client_side');
-  const [pagination, setPagination] = useState<PaginationState>({
+export const Table = <T,>({
+  engineSide = 'client_side',
+  pagination = true,
+  perPageOptions = [
+    { label: '5 / page', value: 5 },
+    { label: '10 / page', value: 10 },
+    { label: '20 / page', value: 20 },
+    { label: '30 / page', value: 30 },
+    { label: '40 / page', value: 40 },
+    { label: '50 / page', value: 50 },
+    { label: '100 / page', value: 100 },
+  ],
+  ...props
+}: TableProps<T>) => {
+  const [engine] = useState<EngineSide>(engineSide ?? 'client_side');
+  const [_pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
   const [globalFilter, setGlobalFilter] = useState<string | undefined>(undefined);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [expanded, setExpanded] = useState({});
 
   const fuzzyFilter = createFuzzyFilter<T>();
   const filterFns = { fuzzy: fuzzyFilter };
@@ -106,13 +111,17 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
   const isClientControl = engine === 'client_side';
   const isServerControl = engine === 'server_side';
 
-  const pageIndex = isServerControl ? Number(search.page ?? 1) - 1 : pagination.pageIndex;
-  const pageSize = isServerControl ? Number(search.per_page ?? 10) : pagination.pageSize;
+  const pageIndex = isServerControl ? Number(search.page ?? 1) - 1 : _pagination.pageIndex;
+  const pageSize = isServerControl ? Number(search.per_page ?? 10) : _pagination.pageSize;
+
+  const selectedLabel = perPageOptions?.find((opt) => opt.value.toString() === search.per_page.toString());
 
   /**freezing columns */
-  const stickyStyle = useCreateStickyColumnStyle<T, unknown>(props.freezeColumnIds ?? []);
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const scrollLeft = useScrollLeft(scrollRef);
+  const { scrollLeft, scrollTop } = useScrollPosition(scrollRef);
+
+  const headerStickyStyle = useCreateStickyHeaderStyle<T, unknown>(props.freezeColumnIds ?? [], scrollTop);
+  const bodyStickyStyle = useCreateStickyColumnStyle<T, unknown>(props.freezeColumnIds ?? []);
 
   const serverSearch = useDebouncedCallback((value: string) => {
     navigate({
@@ -171,11 +180,12 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
     getCoreRowModel: getCoreRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    getExpandedRowModel: getExpandedRowModel(),
 
     /**Client Side Only */
     getSortedRowModel: isClientControl ? getSortedRowModel() : undefined,
     getFilteredRowModel: isClientControl ? getFilteredRowModel() : undefined,
-    getPaginationRowModel: enableFeature.pagination ? (isClientControl ? getPaginationRowModel() : undefined) : undefined,
+    getPaginationRowModel: pagination ? (isClientControl ? getPaginationRowModel() : undefined) : undefined,
 
     filterFns: isClientControl ? filterFns : undefined,
     globalFilterFn: isClientControl ? fuzzyFilter : undefined,
@@ -183,17 +193,18 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
     /**Server Side or Client Side */
     onGlobalFilterChange: isServerControl ? serverSearch : clientSearch,
     onSortingChange: isServerControl ? onSortingChange : setSorting,
+    onExpandedChange: setExpanded,
 
     /**Server Side */
     manualPagination: isServerControl,
     manualSorting: isServerControl,
     manualFiltering: isServerControl,
     pageCount: isServerControl ? props.data?.meta.total_pages : undefined,
-    onPaginationChange: enableFeature.pagination ? (isServerControl ? onPaginationChange : setPagination) : undefined,
+    onPaginationChange: pagination ? (isServerControl ? onPaginationChange : setPagination) : undefined,
 
     /**State */
     initialState: {
-      columnVisibility: enableFeature.columnVisibilitySelector?.initialColumnVisibility,
+      columnVisibility: props.initialColumnVisibility,
       columnOrder: props.columnIds,
       pagination: {
         pageIndex: 0,
@@ -202,7 +213,8 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
     },
     state: {
       sorting,
-      pagination: enableFeature.pagination
+      expanded,
+      pagination: pagination
         ? {
             pageIndex,
             pageSize,
@@ -212,7 +224,6 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
     },
   });
 
-  const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
   const virtualizer = useVirtualizer({
     count: table.getRowModel().rows.length,
     getScrollElement: () => parentRef.current,
@@ -230,9 +241,10 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
 
   return (
     <main className="w-full flex flex-col gap-4">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex gap-4">
-          {enableFeature.menufilter && (
+      <div className="flex items-end justify-between flex-wrap gap-3">
+        <div className="flex gap-4 flex-wrap">
+          <BulkActions<T> table={table} bulkActions={props.bulkActions} />
+          {props.menufilter && (
             <Popover>
               <PopoverTrigger asChild>
                 <Button className="cusrsor-pointer" variant={'outline'}>
@@ -241,8 +253,8 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="start" style={{ width: 'fit-content' }}>
-                <RowComponent cols={enableFeature.menufilter.length > 1 ? 2 : 1}>
-                  {enableFeature.menufilter.map((item, index) => (
+                <RowComponent cols={props.menufilter.length > 1 ? 2 : 1}>
+                  {props.menufilter.map((item, index) => (
                     <Col span={1} key={index}>
                       {item}
                     </Col>
@@ -254,29 +266,28 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
           <Flex gap={'md'} align={'center'} justify={'center'} style={{ width: 300 }}>
             <Input placeholder="Search..." value={globalFilter ?? ''} onChange={(e) => setGlobalFilter(e.target.value)} />
           </Flex>
-          {enableFeature.facetedFilter?.map((filter) => {
-            const column = table.getColumn(filter.columnId);
+          {props.facetedFilter?.map((filter) => {
+            const column = table.getColumn(filter.columnId as string);
             if (!column) return null;
-            return <FacetedFilter key={filter.columnId} column={column} title={filter.title} options={filter.options} />;
+            return (
+              <FacetedFilter key={filter.columnId as string} column={column} title={filter.title} options={filter.options} />
+            );
           })}
-          <Pill onRemove={() => table.resetRowSelection()} selectedCount={selectedRows.length} />
         </div>
-        <Flex gap={8} align={'center'}>
+        <Flex gap={8} align={'end'} justify="flex-end" wrap="wrap">
           {props.topActions}
-          {enableFeature.columnVisibilitySelector?.initialColumnVisibility && (
-            <ColumnVisibilitySelector table={table} columnIds={props.columnIds} />
-          )}
+          {props.initialColumnVisibility && <ColumnVisibilitySelector table={table} columnIds={props.columnIds} />}
         </Flex>
       </div>
       <div className="rounded-md border overflow-hidden">
-        <div ref={scrollRef} className="overflow-x-auto w-full">
+        <div ref={scrollRef} className="overflow-x-auto overflow-y-scroll max-h-[68vh] w-full">
           <div className="relative">
             <TableComponent>
               <TableHeader className="rounded-md">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id} className="cursor-pointer rounded-md bg-background hover:bg-accent/50 group/row">
                     {headerGroup.headers.map((header) => {
-                      const style = stickyStyle(header, scrollLeft);
+                      const style = headerStickyStyle(header, scrollLeft);
                       const isAccessor = header.column.accessorFn !== undefined;
                       return (
                         <TableHead
@@ -299,7 +310,7 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
                                   }[header.column.getIsSorted() as string] ?? null}
                                 </div>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent className="z-100">
                                 {(() => {
                                   const sorted = header.column.getIsSorted();
 
@@ -321,122 +332,101 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows.length > (enableFeature.virtualizer?.virtualizeAt as number)
+                {table.getRowModel().rows.length > (props.virtualizer?.virtualizeAt as number)
                   ? virtualizer.getVirtualItems().map((virtualRow, index) => {
                       const rows = table.getRowModel().rows;
                       const row = rows[virtualRow.index];
                       return (
+                        <Fragment key={row.id}>
+                          <TableRow
+                            data-state={row.getIsSelected() && 'selected'}
+                            className="cursor-pointer bg-background hover:bg-secondary"
+                            onClick={(e) => props.onClickRow(row.original, e)}
+                            key={virtualRow.key}
+                            style={{
+                              height: `${virtualRow.size}px`,
+                              transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
+                            }}
+                          >
+                            {row.getVisibleCells().map((cell) => {
+                              const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
+                              const style = bodyStickyStyle(headerForCell, scrollLeft, row.getIsSelected());
+                              return (
+                                <TableCell style={style} className="sticky-shadow h-14 relative" key={cell.id}>
+                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </TableCell>
+                              );
+                            })}
+                          </TableRow>
+                          {/* EXPANDED ROW */}
+                          {row.getIsExpanded() && (
+                            <TableRow className="bg-muted">
+                              <TableCell colSpan={row.getVisibleCells().length} className="p-4">
+                                {props.expandedRow?.(row.original)}
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </Fragment>
+                      );
+                    })
+                  : table.getRowModel().rows.map((row: Row<any>) => (
+                      <Fragment key={row.id}>
                         <TableRow
                           data-state={row.getIsSelected() && 'selected'}
-                          className="cursor-pointer bg-background hover:bg-secondary"
-                          onClick={(e) => props.onClickRow(row, e)}
-                          key={virtualRow.key}
-                          style={{
-                            height: `${virtualRow.size}px`,
-                            transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
-                          }}
+                          className="bg-background hover:bg-accent/50 group/row"
+                          onClick={(e) => props.onClickRow(row.original, e)}
+                          style={{ cursor: 'pointer' }}
+                          key={row.id}
                         >
-                          {row.getVisibleCells().map((cell) => {
+                          {row.getVisibleCells().map((cell, index) => {
                             const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
-                            const style = stickyStyle(headerForCell, scrollLeft, row.getIsSelected());
+                            const style = bodyStickyStyle(headerForCell, scrollLeft, row.getIsSelected());
                             return (
-                              <TableCell style={style} className="sticky-shadow h-14 relative" key={cell.id}>
+                              <TableCell style={style} className="sticky-shadow h-14 relative" key={index}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                               </TableCell>
                             );
                           })}
                         </TableRow>
-                      );
-                    })
-                  : table.getRowModel().rows.map((row: Row<any>) => (
-                      <TableRow
-                        data-state={row.getIsSelected() && 'selected'}
-                        className="bg-background hover:bg-accent/50 group/row"
-                        onClick={(e) => props.onClickRow(row, e)}
-                        style={{ cursor: 'pointer' }}
-                        key={row.id}
-                      >
-                        {row.getVisibleCells().map((cell, index) => {
-                          const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
-                          const style = stickyStyle(headerForCell, scrollLeft, row.getIsSelected());
-                          return (
-                            <TableCell style={style} className="sticky-shadow h-14 relative" key={index}>
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {/* EXPANDED ROW */}
+                        {row.getIsExpanded() && (
+                          <TableRow className="bg-muted">
+                            <TableCell colSpan={row.getVisibleCells().length} className="p-4">
+                              {props.expandedRow?.(row.original)}
                             </TableCell>
-                          );
-                        })}
-                      </TableRow>
+                          </TableRow>
+                        )}
+                      </Fragment>
                     ))}
               </TableBody>
-              <TableFooter>
-                {table.getFooterGroups().map((footerGroup) => (
-                  <TableRow key={footerGroup.id}>
-                    {footerGroup.headers.map((header) => {
-                      const style = stickyStyle(header, scrollLeft);
-                      return (
-                        <TableHead
-                          style={style}
-                          key={header.index}
-                          colSpan={header.colSpan}
-                          className="sticky-shadow h-14 cursor-pointer relative"
-                        >
-                          {flexRender(header.column.columnDef.footer, header.getContext())}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableFooter>
+              {table.getFooterGroups().length > 0 && (
+                <TableFooter>
+                  {table.getFooterGroups().map((footerGroup) => (
+                    <TableRow key={footerGroup.id}>
+                      {footerGroup.headers.map((header) => {
+                        const style = bodyStickyStyle(header, scrollLeft);
+                        return (
+                          <TableHead
+                            style={style}
+                            key={header.index}
+                            colSpan={header.colSpan}
+                            className="sticky-shadow h-14 cursor-pointer relative"
+                          >
+                            {flexRender(header.column.columnDef.footer, header.getContext())}
+                          </TableHead>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableFooter>
+              )}
             </TableComponent>
           </div>
         </div>
       </div>
-      {enableFeature.pagination && (
-        <Flex direction="column" gap={20} className="bg-background rounded-md p-5">
+      {pagination && (
+        <Flex justify={'end'} align={'center'} className="mb-6">
           <Flex>
-            <div className="flex items-center justify-between mt-4">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm w-24">Total Page</p>
-                  <p className="text-sm">: {table.getPageCount()}</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <p className="text-sm w-24">Current Page</p>
-                  <p className="text-sm">: {table.getState().pagination.pageIndex + 1}</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <p className="text-sm w-24">Page Size</p>
-                  <Select
-                    value={search.per_page.toString()}
-                    onValueChange={(value) =>
-                      navigate({
-                        search(_prev) {
-                          return {
-                            ..._prev,
-                            per_page: value,
-                          };
-                        },
-                      })
-                    }
-                  >
-                    <SelectTrigger className="w-[70px] h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {enableFeature.pagination?.perPageOptions?.map((size) => (
-                        <SelectItem key={size} value={size.toString()}>
-                          {size}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </Flex>
-          <Flex justify={'center'} align={'center'}>
             <TablePagination
               totalPages={table.getPageCount()}
               currentPage={table.getState().pagination.pageIndex + 1}
@@ -444,10 +434,31 @@ export const Table = <T,>({ enableFeature = defaultFeature, ...props }: TablePro
               onNextPage={table.nextPage}
               onPreviousPage={table.previousPage}
             />
+            <Select
+              value={search.per_page.toString()}
+              onValueChange={(value) =>
+                navigate({
+                  search(_prev) {
+                    return {
+                      ..._prev,
+                      per_page: value,
+                    };
+                  },
+                })
+              }
+            >
+              <SelectTrigger className="w-[130px] h-8">{selectedLabel?.label}</SelectTrigger>
+              <SelectContent>
+                {perPageOptions?.map((e) => (
+                  <SelectItem key={e.value} value={e.value.toString()}>
+                    {e.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Flex>
         </Flex>
       )}
-      <BulkActions<T> table={table} bulkActions={props.bulkActions} />
     </main>
   );
 };

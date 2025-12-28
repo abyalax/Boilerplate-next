@@ -3,8 +3,8 @@
 import { useParams } from 'next/navigation';
 import { FC } from 'react';
 import { Main } from '~/components/layouts/main';
-import { FormCV } from '../../../_components/form';
-import { FormDataCV } from '../../../_components/form/schema';
+import { FormCV } from '../../../_components/form/form-cv';
+import { FormDataCV } from '../../../_components/form/schema-cv';
 import { useGetCV } from '../../../_hooks/use-get-cv';
 import { useUpdateCV } from '../../../_hooks/use-update-cv';
 

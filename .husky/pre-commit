@@ -1,2 +1,9 @@
+echo "hold on, checking validation type before commit"
+pnpm tsc -b --noEmit
 pnpm lint-staged
+echo ""
+echo "processing build check"
+echo ""
 pnpm build
+echo ""
+echo "great, all good"

@@ -3,7 +3,7 @@ import { mapJson } from '../base/mapping';
 import { CV } from './cv.type';
 
 export const CVMapper = {
-  toDTO: (cv: Prisma.cvModel): CV => {
+  toDTO: (cv: Prisma.CVModel): CV => {
     return {
       ...cv,
       ...mapJson<CV>({

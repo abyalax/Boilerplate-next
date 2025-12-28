@@ -15,6 +15,9 @@
     "editor.defaultFormatter": "Prisma.prisma"
   },
   "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome"
   }
 }

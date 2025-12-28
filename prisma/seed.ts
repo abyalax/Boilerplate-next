@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { PrismaClient } from '~/generated/prisma/client';
 
 import 'dotenv/config';
-import { mockCVs } from './data.';
+import { mockCVs } from './data';
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -30,11 +30,11 @@ async function main() {
   `);
 
   // --- Insert Roles ---
-  await prisma.roles.createMany({
+  await prisma.role.createMany({
     data: [{ name: 'Client' }, { name: 'Admin' }],
   });
 
-  const insertedRoles = await prisma.roles.findMany();
+  const insertedRoles = await prisma.role.findMany();
   const roleIds = Object.fromEntries(insertedRoles.map((r) => [r.name, r.id]));
 
   // --- Insert Permissions ---
@@ -54,67 +54,114 @@ async function main() {
     { key: 'cv:single_analyze', name: 'Single Analysis CV' },
     { key: 'cv:bulk_analyze', name: 'Bulk Analysis CV' },
 
+    { key: 'chat:read', name: 'Read Chats' },
+    { key: 'chat:create', name: 'Create Chats' },
+    { key: 'chat:update', name: 'Update Chats' },
+    { key: 'chat:delete', name: 'Delete Chats' },
+
+    { key: 'agent:read', name: 'Read Agents' },
+    { key: 'agent:create', name: 'Create Agents' },
+    { key: 'agent:update', name: 'Update Agents' },
+    { key: 'agent:delete', name: 'Delete Agents' },
+
     { key: 'job_desc:create', name: 'Create Job Description' },
     { key: 'job_desc:update', name: 'Update Job Description' },
     { key: 'job_desc:read', name: 'Read Job Description' },
     { key: 'job_desc:delete', name: 'Delete Job Description' },
-  ];
+  ] as const;
 
-  await prisma.permissions.createMany({ data: permissionsData });
+  await prisma.permissions.createMany({ data: [...permissionsData] });
+
+  type PermissionKey = (typeof permissionsData)[number]['key'];
+
+  type PermissionIds = {
+    [k in PermissionKey]: number;
+  };
 
   const insertedPermissions = await prisma.permissions.findMany();
-  const permissionIds = Object.fromEntries(insertedPermissions.map((p) => [p.key, p.id]));
+  const permissionIds = Object.fromEntries(insertedPermissions.map((p) => [p.key, p.id])) as PermissionIds;
 
   // --- Insert Users ---
   const [clientPass, adminPass] = await Promise.all([bcrypt.hash('client_pass', 10), bcrypt.hash('admin_pass', 10)]);
 
-  await prisma.users.createMany({
+  await prisma.user.createMany({
     data: [
       { name: 'Client', email: 'client@gmail.com', password: clientPass },
       { name: 'Admin', email: 'admin@gmail.com', password: adminPass },
     ],
   });
 
-  const insertedUsers = await prisma.users.findMany();
+  const insertedUsers = await prisma.user.findMany();
   const userIds = Object.fromEntries(insertedUsers.map((u) => [u.email, u.id]));
 
   // --- Insert user_roles ---
-  await prisma.user_roles.createMany({
+  await prisma.userRoles.createMany({
     data: [
-      { userId: userIds['client@gmail.com'], roleId: roleIds['Client'] },
-      { userId: userIds['admin@gmail.com'], roleId: roleIds['Admin'] },
+      { user_id: userIds['client@gmail.com'], role_id: roleIds['Client'] },
+      { user_id: userIds['admin@gmail.com'], role_id: roleIds['Admin'] },
     ],
   });
 
   // --- Insert role_permissions ---
-  await prisma.role_permissions.createMany({
+  await prisma.rolePermissions.createMany({
     data: [
       // Client Permissions
-      { roleId: roleIds.Client, permissionId: permissionIds['cv:create'] },
-      { roleId: roleIds.Client, permissionId: permissionIds['cv:read'] },
-      { roleId: roleIds.Client, permissionId: permissionIds['cv:update'] },
-      { roleId: roleIds.Client, permissionId: permissionIds['cv:delete'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:delete'] },
 
-      { roleId: roleIds.Client, permissionId: permissionIds['job_desc:create'] },
-      { roleId: roleIds.Client, permissionId: permissionIds['job_desc:update'] },
-      { roleId: roleIds.Client, permissionId: permissionIds['job_desc:read'] },
-      { roleId: roleIds.Client, permissionId: permissionIds['job_desc:delete'] },
+      {
+        role_id: roleIds.Client,
+        permission_id: permissionIds['job_desc:create'],
+      },
+      {
+        role_id: roleIds.Client,
+        permission_id: permissionIds['job_desc:update'],
+      },
+      {
+        role_id: roleIds.Client,
+        permission_id: permissionIds['job_desc:read'],
+      },
+      {
+        role_id: roleIds.Client,
+        permission_id: permissionIds['job_desc:delete'],
+      },
 
-      { roleId: roleIds.Client, permissionId: permissionIds['cv:read_analyze'] },
-      { roleId: roleIds.Client, permissionId: permissionIds['cv:single_analyze'] },
-      { roleId: roleIds.Client, permissionId: permissionIds['cv:bulk_analyze'] },
+      {
+        role_id: roleIds.Client,
+        permission_id: permissionIds['cv:read_analyze'],
+      },
+      {
+        role_id: roleIds.Client,
+        permission_id: permissionIds['cv:single_analyze'],
+      },
+      {
+        role_id: roleIds.Client,
+        permission_id: permissionIds['cv:bulk_analyze'],
+      },
+
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:delete'] },
+
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:delete'] },
 
       // Admin Permissions
-      { roleId: roleIds.Admin, permissionId: permissionIds['client:read'] },
-      { roleId: roleIds.Admin, permissionId: permissionIds['client:update'] },
-      { roleId: roleIds.Admin, permissionId: permissionIds['client:delete'] },
-      { roleId: roleIds.Admin, permissionId: permissionIds['client:create'] },
-      { roleId: roleIds.Admin, permissionId: permissionIds['client:*'] },
+      { role_id: roleIds.Admin, permission_id: permissionIds['client:read'] },
+      { role_id: roleIds.Admin, permission_id: permissionIds['client:update'] },
+      { role_id: roleIds.Admin, permission_id: permissionIds['client:delete'] },
+      { role_id: roleIds.Admin, permission_id: permissionIds['client:create'] },
+      { role_id: roleIds.Admin, permission_id: permissionIds['client:*'] },
     ],
   });
 
   // --- Insert CV (mockCVs imported) ---
-  await prisma.cv.createMany({
+  await prisma.cV.createMany({
     data: mockCVs,
   });
 

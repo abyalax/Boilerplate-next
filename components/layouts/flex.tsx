@@ -8,7 +8,7 @@ interface FlexProps extends PropsWithChildren<ComponentProps<'div'>> {
   gap?: CSSProperties['gap'];
 }
 
-export const Flex: FC<FlexProps> = ({ gap = 2, justify, direction, wrap, ...props }) => {
+export const Flex: FC<FlexProps> = ({ gap = 10, justify, direction, wrap, ...props }) => {
   return (
     <div
       {...props}

@@ -3,7 +3,6 @@
 import { MoreHorizontalIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { FC } from 'react';
-import { toast } from 'sonner';
 import { ClientParams } from '~/common/types/params';
 import { Button } from '~/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
