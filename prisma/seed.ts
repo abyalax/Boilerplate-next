@@ -111,35 +111,14 @@ async function main() {
       { role_id: roleIds.Client, permission_id: permissionIds['cv:update'] },
       { role_id: roleIds.Client, permission_id: permissionIds['cv:delete'] },
 
-      {
-        role_id: roleIds.Client,
-        permission_id: permissionIds['job_desc:create'],
-      },
-      {
-        role_id: roleIds.Client,
-        permission_id: permissionIds['job_desc:update'],
-      },
-      {
-        role_id: roleIds.Client,
-        permission_id: permissionIds['job_desc:read'],
-      },
-      {
-        role_id: roleIds.Client,
-        permission_id: permissionIds['job_desc:delete'],
-      },
+      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:delete'] },
 
-      {
-        role_id: roleIds.Client,
-        permission_id: permissionIds['cv:read_analyze'],
-      },
-      {
-        role_id: roleIds.Client,
-        permission_id: permissionIds['cv:single_analyze'],
-      },
-      {
-        role_id: roleIds.Client,
-        permission_id: permissionIds['cv:bulk_analyze'],
-      },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:read_analyze'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:single_analyze'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:bulk_analyze'] },
 
       { role_id: roleIds.Client, permission_id: permissionIds['chat:create'] },
       { role_id: roleIds.Client, permission_id: permissionIds['chat:read'] },

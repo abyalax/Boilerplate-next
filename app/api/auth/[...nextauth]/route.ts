@@ -42,12 +42,13 @@ const options: AuthOptions = {
       },
       async authorize(credentials) {
         if (credentials?.email && credentials?.password) {
-          const user = await userService.findUser({ email: credentials.email });
+          const userRepository = userService._getRepository();
+          const user = await userRepository.findWithRolesAndPermissions({
+            email: credentials.email,
+          });
           if (user === undefined) throw new NotFoundException('User not found');
           const isValid = await bcrypt.compare(credentials.password, user.password);
           if (!isValid) throw new UnauthorizedException('Invalid Password');
-          console.log('user authorized');
-
           return user;
         } else {
           throw new UnauthorizedException();

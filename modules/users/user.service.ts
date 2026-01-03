@@ -6,6 +6,8 @@ class UserService extends Service<UserRepository> {
   constructor() {
     super(new UserRepository());
   }
+  _getRepository = () => this.repository;
+  _getModel = () => this._getModel;
 
   paginateUsers(page: number, per_page: number) {
     return this.repository.paginate(0, {

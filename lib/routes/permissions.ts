@@ -1,25 +1,9 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2025-12-28T04:52:43.332Z
+// Generated at: 2026-01-03T12:06:59.761Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
-  '/[clientId]/': ['cv:read'],
-  '/[clientId]/cv/': ['cv:read'],
-  '/backoffice/clients/': [],
-  '/[clientId]/cv/create/': ['cv:read', 'cv:create'],
-  '/backoffice/clients/[clientId]/': ['client:read'],
-  '/[clientId]/cv/[cvId]/update/': ['cv:read', 'cv:update'],
-  '/[clientId]': ['cv:read'],
-  '/:clientId/': ['cv:read'],
-  '/[clientId]/cv': ['cv:read'],
-  '/:clientId/cv/': ['cv:read'],
-  '/backoffice': [],
-  '/backoffice/clients': [],
-  '/[clientId]/cv/create': ['cv:read', 'cv:create'],
-  '/:clientId/cv/create/': ['cv:read', 'cv:create'],
-  '/backoffice/clients/[clientId]': ['client:read'],
-  '/backoffice/clients/:clientId/': ['client:read'],
-  '/[clientId]/cv/[cvId]': ['cv:read'],
-  '/[clientId]/cv/[cvId]/update': ['cv:read', 'cv:update'],
-  '/:clientId/cv/:cvId/update/': ['cv:read', 'cv:update'],
+  '/[clientId]': ['cv:read', 'cv:create', 'cv:update', 'cv:delete'],
+  '/backoffice': ['client:read', 'client:create', 'client:delete', 'client:update'],
+  '/:clientId': ['cv:read', 'cv:create', 'cv:update', 'cv:delete'],
 } as const;

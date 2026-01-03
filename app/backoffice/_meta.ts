@@ -1,0 +1,7 @@
+import { PERMISSIONS } from '~/common/const/permission';
+export const permissions = [
+  PERMISSIONS.ADMIN.READ_CLIENT,
+  PERMISSIONS.ADMIN.CREATE_CLIENT,
+  PERMISSIONS.ADMIN.DELETE_CLIENT,
+  PERMISSIONS.ADMIN.UPDATE_CLIENT,
+];

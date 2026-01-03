@@ -22,12 +22,12 @@ async function generateRoutePermissions() {
     try {
       const fileUrl = pathToFileURL(absolutePath).href;
       const mod = await import(`${fileUrl}?update=${Date.now()}`);
-
       const parsed = relativeFile.replace(/(\/)?(_meta.ts)$/, '');
-      const routePath = parsed === '' ? '/' : `/${parsed.replace(/\\/g, '/')}`;
+      const normalizePath = (p: string) => (p === '/' ? '/' : p.replace(/\/+$/, ''));
+      const routePath = normalizePath(parsed === '' ? '/' : `/${parsed.replace(/\\/g, '/')}`);
 
-      if (Array.isArray(mod.default.permissions)) {
-        basePermissions[routePath] = mod.default.permissions;
+      if (Array.isArray(mod.permissions)) {
+        basePermissions[routePath] = mod.permissions;
       } else {
         basePermissions[routePath] = [];
         console.warn(`⚠️  No permissions exported in ${relativeFile}`);
