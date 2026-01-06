@@ -1,5 +1,6 @@
 import type { AxiosResponse } from 'axios';
 import { NextResponse } from 'next/server';
+import { MetaResponse } from './meta';
 
 export const Message = {
   TOKEN_NOT_FOUND: 'Token Not Found',
@@ -22,8 +23,13 @@ export const Message = {
 export type TResponse<T = unknown> = {
   message?: string;
   error?: unknown[];
-  data?: T;
+  data: T;
 };
 
-export type TAxiosResponse<T = unknown> = AxiosResponse<TResponse<T>>;
+export type TListPagination<T> = {
+  items: T[];
+  meta: MetaResponse;
+};
+
 export type TNextResponse<T = unknown> = Promise<NextResponse<TResponse<T>>>;
+export type TAxiosResponse<T = unknown> = AxiosResponse<TResponse<T>>;

@@ -23,7 +23,7 @@ export type UploadedFiles = {
   extracted?: CV[];
 };
 
-export const POST = safeHandler<ClientParams>(async (req, { params }): TNextResponse<UploadedFiles> => {
+export const POST = safeHandler<ClientParams>(async (req, { params }): TNextResponse<UploadedFiles | undefined> => {
   const { clientId } = await params;
   const { files } = await extractFiles(req);
 
@@ -31,7 +31,8 @@ export const POST = safeHandler<ClientParams>(async (req, { params }): TNextResp
   const uploadsDir = path.join(process.cwd(), 'uploads');
 
   if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-  if (files === undefined) return NextResponse.json({ success: false, message: 'No files uploaded' }, { status: 400 });
+  if (files === undefined)
+    return NextResponse.json({ success: false, message: 'No files uploaded', data: undefined }, { status: 400 });
 
   for (const file of files ?? []) {
     if (!file) continue;
@@ -66,5 +67,6 @@ export const POST = safeHandler<ClientParams>(async (req, { params }): TNextResp
   return NextResponse.json({
     success: true,
     message: 'Files uploaded successfully',
+    data: undefined,
   });
 });
