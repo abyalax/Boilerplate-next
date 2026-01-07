@@ -26,6 +26,14 @@ function matchesPattern(pathname: string, pattern: string): boolean {
       pathSegments.length >= basePattern.length && basePattern.every((seg, i) => seg.startsWith(':') || seg === pathSegments[i])
     );
   }
+  // Dynamic base route should act as PREFIX
+  // example
+  // pattern: /:customerId
+  // path:    /1/guests, /1/guests/123
+  if (patternSegments.some((seg) => seg.startsWith(':'))) {
+    if (pathSegments.length < patternSegments.length) return false;
+    return patternSegments.every((seg, i) => seg.startsWith(':') || seg === pathSegments[i]);
+  }
   if (pathSegments.length !== patternSegments.length) return false;
   return patternSegments.every((seg, i) => seg.startsWith(':') || seg === pathSegments[i]);
 }
