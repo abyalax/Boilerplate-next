@@ -45,6 +45,7 @@ import { useCreateStickyHeaderStyle } from './_hooks/use-sticky-header-style';
 import { BulkAction, BulkActions } from './_ui/bulk-actions';
 import { ColumnVisibilitySelector } from './_ui/column-visibility';
 import { FacetedFilter } from './_ui/faceted-filter';
+import './table.css';
 
 export type EngineSide = 'client_side' | 'server_side';
 export type Option = {
@@ -279,7 +280,7 @@ export const Table = <T,>({
           {props.initialColumnVisibility && <ColumnVisibilitySelector table={table} columnIds={props.columnIds} />}
         </Flex>
       </div>
-      <div className="rounded-md border overflow-hidden">
+      <div className="rounded-md border">
         <div ref={scrollRef} className="overflow-x-auto overflow-y-scroll no-scrollbar max-h-[68vh] w-full">
           <div className="relative">
             <TableComponent>

@@ -1,5 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { ChevronDownCircleIcon, ChevronDownIcon, ChevronRightCircleIcon, ChevronRightIcon, ChevronUpIcon } from 'lucide-react';
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import { Checkbox } from '~/components/ui/checkbox';
 import { CV } from '~/modules/cv/cv.type';
