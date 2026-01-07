@@ -280,7 +280,7 @@ export const Table = <T,>({
         </Flex>
       </div>
       <div className="rounded-md border overflow-hidden">
-        <div ref={scrollRef} className="overflow-x-auto overflow-y-scroll max-h-[68vh] w-full">
+        <div ref={scrollRef} className="overflow-x-auto overflow-y-scroll no-scrollbar max-h-[68vh] w-full">
           <div className="relative">
             <TableComponent>
               <TableHeader className="rounded-md">

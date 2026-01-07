@@ -68,23 +68,6 @@
   animation: slideUp 300ms ease-out;
 }
 
-/* Style shadow right of freeze column */
-.sticky-shadow::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: -1px;
-  height: 100%;
-  width: 3px; /* lebih lebar */
-  pointer-events: none;
-
-  background: linear-gradient(
-    to right,
-    var(--sticky-shadow) 0% /* sisi paling dekat → jelas */,
-    transparent 100%
-  );
-}
-
 @keyframes slideDown {
   from {
     height: 0;

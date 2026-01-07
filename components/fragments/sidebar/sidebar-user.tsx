@@ -1,7 +1,7 @@
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { SignOutDialog } from '~/app/auth/_components/sign-out-dialog';
-import useDialogState from '~/components/hooks/use-dialog-state';
+import { useDialogState } from '~/components/hooks/use-dialog-state';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import {
   DropdownMenu,

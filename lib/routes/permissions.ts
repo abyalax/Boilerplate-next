@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated at: 2026-01-06T16:37:22.269Z
+// Generated at: 2026-01-07T12:00:29.192Z
 
 // Hierarchical permissions (includes parent route permissions)
 export const routePermissions: Record<string, string[]> = {
