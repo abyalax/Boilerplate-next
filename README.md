@@ -56,12 +56,6 @@ The application will be available at [http://localhost:3000](http://localhost:30
 - `pnpm db:migrate` - Run database migrations
 - `pnpm db:seed` - Seed the database with initial data
 - `pnpm db:studio` - Database Studio to manage data
-- `pnpm db:truncate --help` - Show help
-- `pnpm db:truncate` - Clear all data (keeps structure)
-- `pnpm db:truncate user_roles` - Clear specific tables example users and user_roles
-- `pnpm db:drop` - Drop all tables
-- `pnpm db:drop roles permissions` - Drop specific tables example roles and permissions
-- `pnpm db:drop -- help` - Show help
 
 ## How RBAC Works
 
