@@ -11,5 +11,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit_dev
+    ports:
+      - "${MAILPIT_SMTP_PORT}:1025" 
+      - "${MAILPIT_UI_PORT}:8025"   
+    environment:
+      - MP_MAX_MESSAGES=${MAILPIT_MAX_MESSAGES}
+      - MP_SMTP_AUTH_ACCEPT_ANY=${MAILPIT_SMTP_AUTH_ACCEPT_ANY}
+    volumes:
+      - mailpit_data:/var/lib/mailpit/data
+
 volumes:
   postgres_data:
+  mailpit_data:

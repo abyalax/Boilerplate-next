@@ -1,7 +1,7 @@
 import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { sidebarItems } from '~/common/const/sidebar';
 import { useAppSearch } from '~/components/context/search-provider';
 import { Badge } from '~/components/ui/badge';
@@ -15,13 +15,31 @@ import {
   CommandSeparator,
 } from '~/components/ui/command';
 import { ScrollArea } from '~/components/ui/scroll-area';
+import { useSession } from 'next-auth/react';
+import { usePermissions } from '~/components/hooks/use-permissions';
 
 export function CommandMenu() {
   const { setTheme } = useTheme();
   const { clientId } = useParams<{ clientId: string }>();
   const { push } = useRouter();
-  const items = sidebarItems(clientId);
   const { open, setOpen } = useAppSearch();
+
+  const { data } = useSession();
+  const userPermission = data?.user?.permissions?.map((e) => e.key);
+  const permissions = usePermissions(userPermission);
+  const navigations = sidebarItems(clientId);
+
+  // Memoize the filtered navigation items based on permissions
+  const filteredNavigations = useMemo(() => {
+    if (!permissions) return [];
+
+    return navigations
+      .map((section) => ({
+        ...section,
+        items: section.items.filter((item) => item.permissions && permissions.checkPermissions(item.permissions)),
+      }))
+      .filter((section) => section.items.length > 0);
+  }, [navigations, permissions]);
 
   const runCommand = useCallback(
     (command: () => unknown) => {
@@ -37,7 +55,7 @@ export function CommandMenu() {
       <CommandList>
         <ScrollArea type="hover" className="h-72 pe-1">
           <CommandEmpty>No results found.</CommandEmpty>
-          {items.map((group) => (
+          {filteredNavigations.map((group) => (
             <CommandGroup key={group.group} heading={group.group}>
               {group.items.map((navItem, i) => {
                 // Jika ada submenu

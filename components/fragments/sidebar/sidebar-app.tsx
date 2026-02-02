@@ -50,7 +50,7 @@ interface SidebarAppProps {
   appLogo?: string;
 }
 
-export function SidebarApp({ user = { name: 'John Doe', email: 'john@example.com' } }: SidebarAppProps) {
+export function SidebarApp({ user = { name: 'John Doe', email: 'john@example.com' } }: Readonly<SidebarAppProps>) {
   const { collapsible, variant } = useLayout();
   const { state } = useSidebar();
   const { clientId } = useParams<{ clientId: string }>();

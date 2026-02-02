@@ -14,7 +14,7 @@ type SearchProviderProps = {
   children: React.ReactNode;
 };
 
-export function SearchProvider({ children }: SearchProviderProps) {
+export function SearchProvider({ children }: Readonly<SearchProviderProps>) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

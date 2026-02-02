@@ -79,7 +79,7 @@ export class Repository<
     return this.model.delete({ where: { id, user_id: clientId } });
   }
 
-  async paginate<T>(clientId: number, options: PaginateOptions<Where, OrderBy, T>): Promise<{ data: T[]; meta: MetaResponse }> {
+  async paginate<T>(options: PaginateOptions<Where, OrderBy, T>): Promise<{ data: T[]; meta: MetaResponse }> {
     const page = Number(options.page) || 1;
     const per_page = Number(options.per_page) || 10;
     const search = options.search;
@@ -100,10 +100,7 @@ export class Repository<
     }
 
     const total_count = await this.model.count({
-      where: {
-        user_id: clientId === 0 ? undefined : clientId,
-        ...where,
-      },
+      where,
     });
 
     for (const [key, value] of Object.entries(options.order_by || {})) {
@@ -114,10 +111,7 @@ export class Repository<
 
     const data = await this.model.findMany({
       orderBy,
-      where: {
-        user_id: clientId === 0 ? undefined : clientId,
-        ...where,
-      },
+      where,
       skip: (page - 1) * per_page,
       take: per_page,
     });

@@ -10,7 +10,7 @@ class UserService extends Service<UserRepository> {
   _getModel = () => this._getModel;
 
   paginateUsers(page: number, per_page: number) {
-    return this.repository.paginate(0, {
+    return this.repository.paginate({
       page,
       per_page,
     });

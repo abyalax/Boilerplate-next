@@ -12,10 +12,13 @@ class CVService extends Service<CVRepository> {
   list(clientId: number, params: MetaRequest<CV>, where: Prisma.CVWhereInput) {
     const { page, per_page, search, sort_by, sort_order } = params;
 
-    return this.repository.paginate<CV>(clientId, {
+    return this.repository.paginate<CV>({
       page,
       per_page,
-      where,
+      where: {
+        user_id: clientId,
+        ...where,
+      },
       order_by: {
         [sort_by as string]: sort_order,
       },
