@@ -28,11 +28,11 @@ import {
 } from '~/components/ui/command';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '~/components/ui/hover-card';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '~/components/ui/input-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { Spinner } from '~/components/ui/spinner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
 import { cn } from '~/lib/utils';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from './input-group';
 
 // ============================================================================
 // Helpers
@@ -695,7 +695,7 @@ export const PromptInput = ({
         type="file"
       />
       <form className={cn('w-full', className)} onSubmit={handleSubmit} ref={formRef} {...props}>
-        <InputGroup className="overflow-hidden">{children}</InputGroup>
+        <InputGroup>{children}</InputGroup>
       </form>
     </>
   );
@@ -711,7 +711,7 @@ export const PromptInput = ({
 export type PromptInputBodyProps = HTMLAttributes<HTMLDivElement>;
 
 export const PromptInputBody = ({ className, ...props }: PromptInputBodyProps) => (
-  <div className={cn('contents', className)} {...props} />
+  <div className={cn('flex flex-1 items-end min-w-0 min-h-10', className)} {...props} />
 );
 
 export type PromptInputTextareaProps = ComponentProps<typeof InputGroupTextarea>;
@@ -737,7 +737,7 @@ export const PromptInputTextarea = ({
         return;
       }
 
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !e.shiftKey) {
         if (isComposing || e.nativeEvent.isComposing) {
           return;
         }

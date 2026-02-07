@@ -14,16 +14,13 @@ export const Component: FC = () => {
   const { clientId, cvId } = useParams<Params>();
   const { data } = useGetCV(clientId, cvId);
 
-  const { mutate: updateCV } = useUpdateCV(clientId, cvId);
-
   const onSubmit = (values: FormDataCV) => {
     console.log('submit', values);
-    updateCV(values);
   };
 
   return (
     <Main fixed>
-      <FormCV onSubmit={onSubmit} initialValues={data as FormDataCV} buttonText="Update" />
+      <FormCV onSubmit={onSubmit} initialValues={undefined} buttonText="Update" />
     </Main>
   );
 };

@@ -43,21 +43,40 @@ export const useColumns = (params?: Params) => {
         size: 200,
         footer: 'Name',
       }),
-      columnHelper.accessor('certificate.title', {
+
+      columnHelper.accessor('certificates', {
         id: 'certificate',
         header: 'Sertifikat',
-        cell: ({ row }) => row.original.certificate?.at(-1)?.title,
+        cell: ({ row }) => {
+          const lastCert = row.original.certificates?.[row.original.certificates.length - 1];
+          if (!lastCert) return '-';
+          const year = lastCert.issuedYear ? ` (${lastCert.issuedYear})` : '';
+          return `${lastCert.name}${year}`;
+        },
       }),
-      columnHelper.accessor('experience.role', {
+
+      columnHelper.accessor('experiences', {
         id: 'experience',
         header: 'Experience',
-        cell: ({ row }) => row.original.experience?.at(-1)?.role,
+        cell: ({ row }) => {
+          const lastExp = row.original.experiences?.[row.original.experiences.length - 1];
+          if (!lastExp) return '-';
+          const start = lastExp.startDate ? new Date(lastExp.startDate).getFullYear() : '';
+          const end = lastExp.endDate ? new Date(lastExp.endDate).getFullYear() : 'Present';
+          return `${lastExp.role} @ ${lastExp.company} (${start} - ${end})`;
+        },
       }),
-      columnHelper.accessor('education.name', {
+
+      columnHelper.accessor('educations', {
         id: 'education',
         header: 'Education',
-        cell: ({ row }) => row.original.education.at(-1)?.name,
+        cell: ({ row }) => {
+          const lastEdu = row.original.educations?.[row.original.educations.length - 1];
+          if (!lastEdu) return '-';
+          return `${lastEdu.degree} @ ${lastEdu.field}`;
+        },
       }),
+
       columnHelper.display({
         id: 'action',
         header: 'Action',

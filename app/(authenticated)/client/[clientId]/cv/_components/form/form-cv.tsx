@@ -30,10 +30,10 @@ export const FormCV: FC<Props> = ({ onSubmit, initialValues, isLoading = false, 
       address: '',
       linkedin: '',
       about: '',
-      interest: [],
-      skill: [],
-      education: [],
-      certificate: [],
+      interests: [],
+      skills: [],
+      educations: [],
+      certificates: [],
       ...initialValues,
     },
   });
@@ -112,13 +112,13 @@ export const FormCV: FC<Props> = ({ onSubmit, initialValues, isLoading = false, 
             )}
           />
 
-          <FieldArray form={form} schema={cvSchema.shape.interest.element} name="interest" label="Interest" />
-          <FieldArray form={form} schema={cvSchema.shape.skill.element} name="skill" label="Skill" />
+          <FieldArray form={form} schema={cvSchema.shape.interests.element} name="interests" label="Interest" />
+          <FieldArray form={form} schema={cvSchema.shape.skills.element} name="skills" label="Skill" />
 
           <Section>
             <FieldObjectArray
               form={form}
-              name="education"
+              name="educations"
               label="Education"
               shape={{
                 name: { label: 'School Name', type: 'text' },
@@ -130,7 +130,7 @@ export const FormCV: FC<Props> = ({ onSubmit, initialValues, isLoading = false, 
           <Section>
             <FieldObjectArray
               form={form}
-              name="experience"
+              name="experiences"
               label="Experience"
               shape={{
                 role: { label: 'Role' },
@@ -157,8 +157,8 @@ export const FormCV: FC<Props> = ({ onSubmit, initialValues, isLoading = false, 
           <Section>
             <FieldObjectArray
               form={form}
-              name="certificate"
-              label="Certificate"
+              name="certificates"
+              label="Certificates"
               shape={{
                 title: { label: 'Title' },
                 issuer: { label: 'Issuer' },

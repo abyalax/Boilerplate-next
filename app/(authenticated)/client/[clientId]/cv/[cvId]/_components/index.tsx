@@ -21,14 +21,14 @@ export const Component: FC = () => {
     { label: 'Linkedin', children: data?.linkedin },
     { label: 'Address', children: data?.address },
     { label: 'About', children: data?.about },
-    { label: 'Interest', children: data?.interest },
+    { label: 'Interest', children: data?.interests[0].name },
     {
       label: 'Skill',
       children: (
         <Flex>
-          {data?.skill.map((item) => (
-            <Badge variant={'secondary'} key={item}>
-              {item}
+          {data?.skills.map((item) => (
+            <Badge variant={'secondary'} key={item.skill.id}>
+              {item.skill.name}
             </Badge>
           ))}
         </Flex>
@@ -38,20 +38,20 @@ export const Component: FC = () => {
       label: 'Experience',
       children: (
         <Flex direction="column">
-          {data?.experience?.map((item) => (
+          {data?.experiences?.map((item) => (
             <Flex key={item.company} direction="column">
               <P className="m-0">{item.role}</P>
               <P className="m-0">{item.company}</P>
               <P className="m-0">{item.description}</P>
               <P className="m-0">
-                {item.start} - {item.end}
+                {item.startDate} - {item.endDate}
               </P>
             </Flex>
           ))}
         </Flex>
       ),
     },
-    { label: 'Education', children: data?.education[0].name },
+    { label: 'Education', children: data?.educations[0].field },
   ];
 
   return (

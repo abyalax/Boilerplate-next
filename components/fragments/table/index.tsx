@@ -59,7 +59,7 @@ export type TableProps<T> = {
   columns: ColumnDef<T, any>[];
   columnIds: string[];
   freezeColumnIds?: string[];
-  data?: { data: T[]; meta: MetaResponse };
+  data?: { items: T[]; meta: MetaResponse };
   topActions?: ReactNode;
   virtualizer?: { virtualizeAt: number };
   initialColumnVisibility?: Record<keyof T, boolean>;
@@ -170,7 +170,7 @@ export const Table = <T,>({
 
   const table = useReactTable<T>({
     /**Common */
-    data: props.data?.data ?? [],
+    data: props.data?.items ?? [],
     columns: props.columns ?? [],
     debugTable: false,
     enableRowSelection: true,

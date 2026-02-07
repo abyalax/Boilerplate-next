@@ -1,5 +1,5 @@
 import { ArrowUp, Check, History, Plus, Shuffle } from 'lucide-react';
-import { Dispatch, FC, KeyboardEvent, SetStateAction, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '~/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
@@ -14,42 +14,28 @@ const models = [
 
 type Props = {
   disabled?: boolean;
+  status: string;
   message: string;
   setMessage: Dispatch<SetStateAction<string>>;
-  handleSubmit: (message: string) => void;
+  handleSubmit: VoidFunction;
 };
 
-export const InputChat: FC<Props> = ({ handleSubmit, message, setMessage, disabled }) => {
+export const Prompt: FC<Props> = ({ handleSubmit, message, setMessage, disabled, status }) => {
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-
-  const _handleSubmit = () => {
-    console.log('trigger handle submit');
-    if (!message.trim()) return;
-    console.log('handle submit');
-    handleSubmit(message);
-    setMessage('');
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      _handleSubmit();
-    }
-  };
 
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="rounded-2xl border border-border bg-background px-4 py-2 shadow-lg">
         {/* Input Area */}
+
         <div className="flex items-start gap-3 mb-3">
           <Textarea
-            value={message}
-            disabled={disabled}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
+            value={message}
             placeholder="Reply..."
             className="flex-1 min-h-10 resize-none border-0 bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+            disabled={status !== 'ready'}
           />
         </div>
 
@@ -104,7 +90,7 @@ export const InputChat: FC<Props> = ({ handleSubmit, message, setMessage, disabl
 
             {/* Submit */}
             <Button
-              onClick={_handleSubmit}
+              onClick={handleSubmit}
               disabled={!message.trim() || disabled}
               size="icon"
               className="h-9 w-9 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"

@@ -14,25 +14,134 @@ datasource db {
 }
 
 model CV {
-  id          Int    @id @default(autoincrement())
-  user_id     Int
-  name        String @db.VarChar(255)
-  email       String @db.VarChar(100)
-  address     String @db.VarChar(255)
-  linkedin    String @db.VarChar(100)
-  about       String
-  interest    Json
-  skill       Json
-  education   Json
-  experience  Json
-  projects    Json
-  certificate Json
+  id      Int @id @default(autoincrement())
+  user_id Int
 
-  user User @relation(fields: [user_id], references: [id])
+  name     String @db.VarChar(255)
+  email    String @db.VarChar(100)
+  address  String @db.VarChar(255)
+  linkedin String @db.VarChar(150)
+  about    String @db.Text
+
+  user         User          @relation(fields: [user_id], references: [id])
+  skills       CVSkill[]
+  educations   Education[]
+  experiences  Experience[]
+  projects     Project[]
+  certificates Certificate[]
+  interests    Interest[]
 
   @@index([name])
   @@index([email])
   @@map("cv")
+}
+
+model Skill {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar(100)
+
+  cvs CVSkill[]
+
+  @@map("skills")
+}
+
+model CVSkill {
+  id       Int @id @default(autoincrement())
+  cv_id    Int
+  skill_id Int
+
+  level Int?
+  years Float?
+
+  cv    CV    @relation(fields: [cv_id], references: [id])
+  skill Skill @relation(fields: [skill_id], references: [id])
+
+  @@unique([cv_id, skill_id])
+  @@index([skill_id])
+  @@map("cv_skills")
+}
+
+model Education {
+  id    Int @id @default(autoincrement())
+  cv_id Int
+
+  institution String @db.VarChar(255)
+  degree      String @db.VarChar(150)
+  field       String @db.VarChar(150)
+
+  startYear Int  @map("start_year")
+  endYear   Int? @map("end_year")
+
+  description String @db.Text
+
+  cv CV @relation(fields: [cv_id], references: [id])
+
+  @@index([institution])
+  @@index([degree])
+  @@map("educations")
+}
+
+model Experience {
+  id    Int @id @default(autoincrement())
+  cv_id Int
+
+  company String @db.VarChar(255)
+  role    String @db.VarChar(255)
+
+  startDate DateTime  @map("start_date")
+  endDate   DateTime? @map("end_date")
+  isCurrent Boolean   @default(false) @map("is_current")
+
+  description String @db.Text
+
+  cv CV @relation(fields: [cv_id], references: [id])
+
+  @@index([company])
+  @@index([role])
+  @@map("experiences")
+}
+
+model Project {
+  id    Int @id @default(autoincrement())
+  cv_id Int
+
+  name        String  @db.VarChar(255)
+  description String  @db.Text
+  techStack   String  @map("techstack") @db.VarChar(255)
+  link        String?
+
+  cv CV @relation(fields: [cv_id], references: [id])
+
+  @@index([name])
+  @@map("projects")
+}
+
+model Certificate {
+  id    Int @id @default(autoincrement())
+  cv_id Int
+
+  name        String @db.VarChar(255)
+  issuer      String @db.VarChar(255)
+  issuedYear  Int    @map("issued_year")
+  description String @db.Text
+
+  cv CV @relation(fields: [cv_id], references: [id])
+
+  @@index([name])
+  @@index([issuer])
+  @@map("certificates")
+}
+
+model Interest {
+  id    Int @id @default(autoincrement())
+  cv_id Int
+
+  name        String @db.VarChar(150)
+  description String @db.Text
+
+  cv CV @relation(fields: [cv_id], references: [id])
+
+  @@map("interests")
 }
 
 model User {

@@ -1,40 +1,65 @@
 export type Education = {
-  name: string;
-  major: string;
+  institution: string;
+  degree: string;
+  field: string;
+  startYear: number;
+  endYear?: number;
+  description?: string;
 };
 
 export type Experience = {
-  role: string;
   company: string;
+  role: string;
   description?: string;
-  start?: string;
-  end?: string;
+  startDate: string; // ISO date
+  endDate?: string; // ISO date
+  isCurrent?: boolean;
 };
 
 export type Project = {
-  title: string;
+  name: string;
   description: string;
+  techStack?: string;
+  link?: string;
 };
 
 export type Certificate = {
-  title: string;
+  name: string;
   issuer: string;
-  year?: number;
-  url?: string;
+  issuedYear?: number;
+  description?: string;
+};
+
+export type Interest = {
+  name: string;
+  description?: string;
+};
+
+export type Skill = {
+  id?: number;
+  name: string;
+};
+
+export type CVSkill = {
+  skill: Skill;
+  level?: number; // 1–5
+  years?: number;
 };
 
 export type CV = {
   id: number;
-  name: string;
   user_id: number;
+
+  name: string;
   email: string;
   address: string;
-  about: string;
   linkedin: string;
-  interest: string[];
-  skill: string[];
-  education: Education[];
-  experience: Experience[];
+  about: string;
+
+  skills: CVSkill[];
+  interests: Interest[];
+  educations: Education[];
+  experiences: Experience[];
   projects: Project[];
-  certificate: Certificate[];
+  certificates: Certificate[];
 };

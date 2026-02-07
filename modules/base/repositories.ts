@@ -1,19 +1,26 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <generic repositories> */
 import { MetaResponse } from '~/common/types/meta';
+import { CachePort } from './cache';
 
 type CustomOrderBy = {
   [key: string]: 'asc' | 'desc';
 };
 
-export type PaginateOptions<Where, OrderBy, Entity> = {
+type SearchMapper<Entity, Where> = {
+  [K in keyof Entity]?: (term?: string) => Where;
+};
+
+export type PaginateOptions<Where, OrderBy, Entity, Include> = {
   page: string | number;
   per_page: string | number;
   search?: {
     term?: string;
     fields: (keyof Entity)[];
+    mapper: SearchMapper<Entity, Where>;
   };
   where?: Where;
   order_by?: OrderBy | CustomOrderBy;
+  include?: Include;
 };
 
 export class Repository<
@@ -44,9 +51,11 @@ export class Repository<
   OrderBy,
 > {
   protected model: ModelDelegate;
+  public cache?: CachePort;
 
-  constructor(model: ModelDelegate) {
+  constructor(model: ModelDelegate, cache?: CachePort) {
     this.model = model;
+    this.cache = cache;
   }
 
   _getModel() {
@@ -79,7 +88,7 @@ export class Repository<
     return this.model.delete({ where: { id, user_id: clientId } });
   }
 
-  async paginate<T>(options: PaginateOptions<Where, OrderBy, T>): Promise<{ data: T[]; meta: MetaResponse }> {
+  async paginate<T, Include>(options: PaginateOptions<Where, OrderBy, T, Include>): Promise<{ items: T[]; meta: MetaResponse }> {
     const page = Number(options.page) || 1;
     const per_page = Number(options.per_page) || 10;
     const search = options.search;
@@ -88,15 +97,13 @@ export class Repository<
 
     // --- Advanced Search Across Fields ---
     if (search?.term && search.fields?.length) {
-      const searchFilter = {
-        OR: search.fields.map((field) => ({
-          [field]: { contains: search.term, mode: 'insensitive' },
-        })),
-      };
+      const OR = search.fields.map((field) => search.mapper?.[field]?.(search.term)).filter(Boolean);
 
-      where = {
-        AND: [where, searchFilter],
-      };
+      if (OR.length) {
+        where = {
+          AND: [where, { OR }],
+        };
+      }
     }
 
     const total_count = await this.model.count({
@@ -114,12 +121,13 @@ export class Repository<
       where,
       skip: (page - 1) * per_page,
       take: per_page,
+      include: options.include,
     });
 
     const total_pages = Math.ceil(total_count / per_page);
 
     return {
-      data,
+      items: data,
       meta: {
         page,
         per_page,

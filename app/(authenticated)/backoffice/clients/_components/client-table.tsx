@@ -10,7 +10,7 @@ export const ClientsTable = () => {
   return (
     <Table
       data={{
-        data: [],
+        items: [],
         meta: {
           page: 0,
           per_page: 0,

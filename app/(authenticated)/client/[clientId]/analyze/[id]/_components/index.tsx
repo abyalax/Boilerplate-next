@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { CV } from '~/modules/cv/cv.type';
 
 type Props = {
-  data: CV;
+  data?: CV;
 };
 
 export const Component: FC<Props> = ({ data }) => {

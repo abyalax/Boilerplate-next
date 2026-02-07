@@ -1,4 +1,4 @@
-import { HelpCircle, Home, LayoutDashboard, Notebook, Settings, Table2 } from 'lucide-react';
+import { BotIcon, FileText, HelpCircle, Home, LayoutDashboard, MessagesSquare, Notebook, Settings, Table2 } from 'lucide-react';
 import { PERMISSIONS } from '~/common/const/permission';
 import { MenuGroup, MenuItem } from '~/components/fragments/sidebar/sidebar-app';
 import { url } from '~/lib/utils/converter';
@@ -22,19 +22,19 @@ export const sidebarItems = (clientId: string): MenuGroup[] => [
       {
         title: 'Messages',
         url: url('/client/[clientId]/messages', { clientId }),
-        icon: Table2,
+        icon: MessagesSquare,
         permissions: [PERMISSIONS.CLIENT.READ_CHATS],
       },
       {
         title: 'Chats',
         url: url('/client/[clientId]/chats', { clientId }),
-        icon: Table2,
+        icon: BotIcon,
         permissions: [PERMISSIONS.CLIENT.READ_CHATS],
       },
       {
         title: 'Analyze',
         url: url('/client/[clientId]/analyze', { clientId }),
-        icon: Table2,
+        icon: FileText,
         permissions: [PERMISSIONS.CLIENT.READ_ANALYZE],
       },
     ],
