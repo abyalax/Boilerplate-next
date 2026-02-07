@@ -1,4 +1,4 @@
-import { FormDataCV } from '~/app/[clientId]/cv/_components/form/schema-cv';
+import { FormDataCV } from '~/app/(authenticated)/client/[clientId]/cv/_components/form/schema-cv';
 import { TAxiosResponse } from '~/common/types/response';
 import { api } from '~/lib/axios/api';
 import { ReturnExtracted } from '~/lib/pdf/client';

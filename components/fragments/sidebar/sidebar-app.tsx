@@ -42,8 +42,8 @@ export interface MenuGroup {
 
 interface SidebarAppProps {
   user?: {
-    name: string;
-    email: string;
+    name?: string | null;
+    email?: string | null;
     avatar?: string;
   };
   appName?: string;

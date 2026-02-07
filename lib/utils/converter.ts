@@ -2,15 +2,17 @@ import { AppRouteHandlerRoutes, AppRoutes } from '~/.next/types/routes';
 
 type ExtractParams<T extends string> = T extends `${string}[${infer Param}]${infer Rest}` ? Param | ExtractParams<Rest> : never;
 
-type URLParamsObject<T extends AppRoutes> = ExtractParams<T> extends never
-  ? // biome-ignore lint/complexity/noBannedTypes: <>
-    {} // no params
-  : { [K in ExtractParams<T>]: string };
+type URLParamsObject<T extends AppRoutes> =
+  ExtractParams<T> extends never
+    ? // biome-ignore lint/complexity/noBannedTypes: <>
+      {} // no params
+    : { [K in ExtractParams<T>]: string };
 
-type EndpointParamsObject<T extends AppRouteHandlerRoutes> = ExtractParams<T> extends never
-  ? // biome-ignore lint/complexity/noBannedTypes: <>
-    {} // no params
-  : { [K in ExtractParams<T>]: string };
+type EndpointParamsObject<T extends AppRouteHandlerRoutes> =
+  ExtractParams<T> extends never
+    ? // biome-ignore lint/complexity/noBannedTypes: <>
+      {} // no params
+    : { [K in ExtractParams<T>]: string };
 
 /**
  *
@@ -19,7 +21,7 @@ type EndpointParamsObject<T extends AppRouteHandlerRoutes> = ExtractParams<T> ex
  * @returns string url
  *
  * @example
- * url('/[clientId]/cv/[cvId]', { clientId: '1', cvId: '88' })
+ * url('/client/[clientId]/cv/[cvId]', { clientId: '1', cvId: '88' })
  * => "/2/cv/88"
  */
 export function url<T extends AppRoutes>(url: T, params?: URLParamsObject<T>): string {

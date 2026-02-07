@@ -1,6 +1,6 @@
 import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { SignOutDialog } from '~/app/auth/_components/sign-out-dialog';
+import { SignOutDialog } from '~/app/(public)/auth/_components/sign-out-dialog';
 import { useDialogState } from '~/components/hooks/use-dialog-state';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import {
@@ -16,13 +16,13 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '~/c
 
 type NavUserProps = {
   user: {
-    name: string;
-    email: string;
+    name?: string | null;
+    email?: string | null;
     avatar?: string;
   };
 };
 
-export function SidebarUser({ user }: NavUserProps) {
+export function SidebarUser({ user }: Readonly<NavUserProps>) {
   const { isMobile } = useSidebar();
   const [open, setOpen] = useDialogState();
 
@@ -37,7 +37,7 @@ export function SidebarUser({ user }: NavUserProps) {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={user.avatar} alt={user.name ?? ''} />
                   <AvatarFallback className="rounded-lg">SN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-start text-sm leading-tight">
@@ -56,7 +56,7 @@ export function SidebarUser({ user }: NavUserProps) {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarImage src={user.avatar} alt={user.name ?? ''} />
                     <AvatarFallback className="rounded-lg">SN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-start text-sm leading-tight">

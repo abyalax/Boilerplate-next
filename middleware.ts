@@ -7,11 +7,14 @@ import { matchPermission } from './lib/utils';
 const publicRoutes = new Set(['/auth/register', '/auth/login', '/auth/forgot-password', '/auth/reset-password']);
 
 function getRequiredPermissions(pathname: string): string[] {
+  // static match first (High Priority)
   if (routePermissions[pathname]) return routePermissions[pathname];
-  for (const [pattern, permissions] of Object.entries(routePermissions)) {
-    if (pattern.includes(':') || pattern.includes('*')) {
-      if (matchesPattern(pathname, pattern)) return permissions;
-    }
+  const patterns = Object.entries(routePermissions)
+    .filter(([pattern]) => pattern.includes(':') || pattern.includes('*'))
+    .sort((a, b) => b[0].length - a[0].length);
+
+  for (const [pattern, permissions] of patterns) {
+    if (matchesPattern(pathname, pattern)) return permissions;
   }
   return [];
 }

@@ -9,30 +9,48 @@ export const sidebarItems = (clientId: string): MenuGroup[] => [
     items: [
       {
         title: 'Dashboard',
-        url: url('/[clientId]/dashboard', { clientId }),
+        url: url('/client/[clientId]/dashboard', { clientId }),
         icon: LayoutDashboard,
-        permissions: [],
+        permissions: [PERMISSIONS.CLIENT.READ_CV, PERMISSIONS.CLIENT.READ_CHATS, PERMISSIONS.CLIENT.READ_ANALYZE],
       },
       {
         title: 'Curriculum Vitae',
-        url: url('/[clientId]/cv', { clientId }),
+        url: url('/client/[clientId]/cv', { clientId }),
         icon: Table2,
-        permissions: [],
+        permissions: [PERMISSIONS.CLIENT.READ_CV],
+      },
+      {
+        title: 'Messages',
+        url: url('/client/[clientId]/messages', { clientId }),
+        icon: Table2,
+        permissions: [PERMISSIONS.CLIENT.READ_CHATS],
+      },
+      {
+        title: 'Chats',
+        url: url('/client/[clientId]/chats', { clientId }),
+        icon: Table2,
+        permissions: [PERMISSIONS.CLIENT.READ_CHATS],
+      },
+      {
+        title: 'Analyze',
+        url: url('/client/[clientId]/analyze', { clientId }),
+        icon: Table2,
+        permissions: [PERMISSIONS.CLIENT.READ_ANALYZE],
       },
     ],
   },
   {
-    group: 'Admin',
+    group: 'Backoffice',
     items: [
       {
-        title: 'Beranda',
-        url: `/${clientId}`,
+        title: 'Dasboard',
+        url: url('/backoffice/dashboard'),
         icon: Home,
         permissions: [PERMISSIONS.ADMIN.READ_CLIENT],
       },
       {
-        title: 'Admin',
-        url: `/${clientId}/admin`,
+        title: 'Clients',
+        url: url('/backoffice/clients'),
         icon: Notebook,
         permissions: [PERMISSIONS.ADMIN.READ_CLIENT],
       },

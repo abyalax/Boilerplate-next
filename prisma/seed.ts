@@ -111,11 +111,6 @@ async function main() {
       { role_id: roleIds.Client, permission_id: permissionIds['cv:update'] },
       { role_id: roleIds.Client, permission_id: permissionIds['cv:delete'] },
 
-      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:create'] },
-      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:update'] },
-      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:read'] },
-      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:delete'] },
-
       { role_id: roleIds.Client, permission_id: permissionIds['cv:read_analyze'] },
       { role_id: roleIds.Client, permission_id: permissionIds['cv:single_analyze'] },
       { role_id: roleIds.Client, permission_id: permissionIds['cv:bulk_analyze'] },
@@ -136,6 +131,30 @@ async function main() {
       { role_id: roleIds.Admin, permission_id: permissionIds['client:delete'] },
       { role_id: roleIds.Admin, permission_id: permissionIds['client:create'] },
       { role_id: roleIds.Admin, permission_id: permissionIds['client:*'] },
+
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:delete'] },
+
+      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['job_desc:delete'] },
+
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:read_analyze'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:single_analyze'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['cv:bulk_analyze'] },
+
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['chat:delete'] },
+
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:create'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:read'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:update'] },
+      { role_id: roleIds.Client, permission_id: permissionIds['agent:delete'] },
     ],
   });
 

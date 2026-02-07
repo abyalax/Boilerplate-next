@@ -37,9 +37,6 @@ describe('Email Integration Test with Mailpit', () => {
     // Gunakan fetch bawaan Node 18+ atau axios
     const response = await fetch('http://localhost:8025/api/v1/messages');
     const data = await response.json();
-
-    console.log(data);
-
     const latestEmail = data.messages.find((m: Messages) => m.Subject === testSubject);
 
     expect(latestEmail).toBeDefined();

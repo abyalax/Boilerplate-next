@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  serverExternalPackages: ['pdf-parse-new'],
+  serverExternalPackages: ['pdf-parse-new', '@mastra/*'],
 };
 
 export default nextConfig;

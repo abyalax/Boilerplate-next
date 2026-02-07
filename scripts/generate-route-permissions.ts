@@ -23,13 +23,20 @@ async function generateRoutePermissions() {
       const fileUrl = pathToFileURL(absolutePath).href;
       const mod = await import(`${fileUrl}?update=${Date.now()}`);
       const parsed = relativeFile.replace(/(\/)?(_meta.ts)$/, '');
-      const normalizePath = (p: string) => (p === '/' ? '/' : p.replace(/\/+$/, ''));
-      const routePath = normalizePath(parsed === '' ? '/' : `/${parsed.replace(/\\/g, '/')}`);
+      // remove match grouping ()
+      const routePath =
+        '/' +
+        parsed
+          .split(/[\\/]/)
+          .filter((seg) => seg && !seg.startsWith('(') && !seg.endsWith(')'))
+          .join('/');
+
+      const finalKey = routePath === '' ? '/' : routePath;
 
       if (Array.isArray(mod.permissions)) {
-        basePermissions[routePath] = mod.permissions;
+        basePermissions[finalKey] = mod.permissions;
       } else {
-        basePermissions[routePath] = [];
+        basePermissions[finalKey] = [];
         console.warn(`⚠️  No permissions exported in ${relativeFile}`);
       }
     } catch (e) {
@@ -55,8 +62,8 @@ async function generateRoutePermissions() {
     if (route.includes('[')) {
       // Convert [id] to :id pattern for matching
       const dynamicPattern = route
-        .replace(/\[\.\.\.([^\]]+)\]/g, '*') // [...slug] -> *
-        .replace(/\[([^\]]+)\]/g, ':$1'); // [id] -> :id
+        .replaceAll(/\[\.\.\.([^\]]+)\]/g, '*') // [...slug] -> *
+        .replaceAll(/\[([^\]]+)\]/g, ':$1'); // [id] -> :id
 
       allRoutes.add(dynamicPattern);
     }
@@ -110,7 +117,8 @@ export const routePermissions: Record<string, string[]> = ${JSON.stringify(hiera
 // Helper function for dynamic route matching during generation
 function matchesDynamicRoute(pathname: string, routePattern: string): boolean {
   const pathSegments = pathname.split('/').filter(Boolean);
-  const routeSegments = routePattern.split('/').filter(Boolean);
+  // ignore groups foldering
+  const routeSegments = routePattern.split('/').filter((seg) => Boolean(seg) && !seg.startsWith('(') && !seg.endsWith(')'));
   // kalau routePattern dynamic tapi pathSegmentnya juga static → jangan cocokkan
   if (routeSegments.some((seg) => seg.includes('[')) && pathSegments.every((seg) => /^[a-z0-9_-]+$/.test(seg))) {
     return false;
@@ -181,5 +189,3 @@ async function main() {
 }
 
 main().then().catch(console.error);
-
-// if (require.main === module) main().catch(console.error);

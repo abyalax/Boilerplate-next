@@ -1,10 +1,11 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 import { BreadcrumbProps, Breadcrumbs } from '~/app/_components/ui/app-breadcrumbs';
 import { ToggleTheme } from '~/app/_components/ui/toggle-theme';
 import { SidebarApp } from '~/components/fragments/sidebar/sidebar-app';
-import { H3 } from '~/components/ui/typography';
+import { H4 } from '~/components/ui/typography';
 import { cn } from '~/lib/utils';
 import { ConfigDrawer } from '../fragments/config/config-drawer';
 import { AppSearch } from '../fragments/input/app-search';
@@ -20,9 +21,12 @@ interface Props extends PropsWithChildren {
 }
 
 export const PageScreen: FC<Props> = ({ title, breadcrumbs, children, topActions }) => {
+  const { data } = useSession();
+  const user = data?.user;
+
   return (
     <SidebarProvider>
-      <SidebarApp />
+      <SidebarApp user={{ email: user?.email, name: user?.name }} />
       <SidebarInset
         className={cn(
           // Set content container, so we can use container queries
@@ -45,7 +49,7 @@ export const PageScreen: FC<Props> = ({ title, breadcrumbs, children, topActions
         <Main fixed fluid>
           <Flex direction="row" justify="space-between" className="gap-4 mb-4">
             <Flex direction="column" gap={20}>
-              <H3 className="text-start">{title}</H3>
+              <H4 className="text-start">{title}</H4>
               <Breadcrumbs items={breadcrumbs} />
             </Flex>
             {topActions}

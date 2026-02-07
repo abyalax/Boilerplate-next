@@ -379,11 +379,11 @@ export const Table = <T,>({
                           style={{ cursor: 'pointer' }}
                           key={row.id}
                         >
-                          {row.getVisibleCells().map((cell, index) => {
+                          {row.getVisibleCells().map((cell) => {
                             const headerForCell = table.getHeaderGroups()[0].headers[cell.column.getIndex()];
                             const style = bodyStickyStyle(headerForCell, scrollLeft, row.getIsSelected());
                             return (
-                              <TableCell style={style} className="sticky-shadow h-14 relative" key={index}>
+                              <TableCell style={style} className="sticky-shadow h-14 relative" key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                               </TableCell>
                             );

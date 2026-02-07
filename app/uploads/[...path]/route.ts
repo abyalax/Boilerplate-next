@@ -23,7 +23,7 @@ export const GET = safeHandler<{ path: string[] }>(async (_req, { params }) => {
         'Content-Type': detectMime(filePath),
       },
     });
-  } catch (_) {
-    return NextResponse.json({ error: 'File not found' }, { status: 404 });
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 404 });
   }
 });
