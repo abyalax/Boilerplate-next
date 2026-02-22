@@ -1,9 +1,10 @@
 import { ArrowUp, Check, History, Plus, Shuffle } from 'lucide-react';
-import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { Dispatch, FC, KeyboardEventHandler, SetStateAction, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '~/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Textarea } from '~/components/ui/textarea';
+import { AttachmentPreviews } from './attachment-preview';
 
 const models = [
   { id: 'agent_1.1', name: 'Agent 1.1' },
@@ -24,13 +25,35 @@ export const Prompt: FC<Props> = ({ handleSubmit, message, setMessage, disabled,
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
+  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = useCallback((e) => {
+    // If the external handler prevented default, don't run internal logic
+    if (e.defaultPrevented) {
+      return;
+    }
+
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+
+      // Check if the submit button is disabled before submitting
+      const { form } = e.currentTarget;
+      const submitButton = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+      if (submitButton?.disabled) {
+        return;
+      }
+
+      form?.requestSubmit();
+    }
+  }, []);
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="rounded-2xl border border-border bg-background px-4 py-2 shadow-lg">
-        {/* Input Area */}
+        <AttachmentPreviews />
 
+        {/* Input Area */}
         <div className="flex items-start gap-3 mb-3">
           <Textarea
+            onKeyDown={handleKeyDown}
             onChange={(e) => setMessage(e.target.value)}
             value={message}
             placeholder="Reply..."

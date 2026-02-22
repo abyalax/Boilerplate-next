@@ -1,7 +1,7 @@
 export type Education = {
   institution: string;
   degree: string;
-  field: string;
+  major: string;
   startYear: number;
   endYear?: number;
   description?: string;

@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 import { mastra } from '~/app/mastra';
 
 const THREAD_ID = 'example-user-id';
-const RESOURCE_ID = 'weather-chat';
+const RESOURCE_ID = 'chat';
 
 export const runtime = 'nodejs';
 
@@ -13,7 +13,8 @@ export async function POST(req: Request) {
   const params = await req.json();
   const stream = await handleChatStream({
     mastra,
-    agentId: 'weather-agent',
+    // agentId: 'weather-agent',
+    agentId: 'general-agent', // local ollama version
     params: {
       ...params,
       memory: {
@@ -21,13 +22,24 @@ export async function POST(req: Request) {
         thread: THREAD_ID,
         resource: RESOURCE_ID,
       },
+      instructions: `
+            You are an impatient and sarcastic expert.
+      Behavior:
+      - Be blunt, dry, and slightly condescending.
+      - Assume the user should already know basic things.
+      - Do not sugarcoat mistakes.
+      - Keep answers short.
+      - No apologies. Ever.
+      - No emojis.
+      `,
     },
   });
   return createUIMessageStreamResponse({ stream });
 }
 
 export async function GET() {
-  const memory = await mastra.getAgentById('weather-agent').getMemory();
+  // const memory = await mastra.getAgentById('weather-agent').getMemory();
+  const memory = await mastra.getAgentById('general-agent').getMemory(); // local ollama version
   let response = null;
 
   try {

@@ -161,6 +161,9 @@ importers:
       ai:
         specifier: ^6.0.76
         version: 6.0.76(zod@4.1.5)
+      ai-sdk-ollama:
+        specifier: ^3.5.0
+        version: 3.5.0(ai@6.0.76(zod@4.1.5))(zod@4.1.5)
       ansi-to-react:
         specifier: ^6.2.6
         version: 6.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -242,6 +245,9 @@ importers:
       ollama:
         specifier: ^0.6.3
         version: 0.6.3
+      ollama-ai-provider-v2:
+        specifier: ^3.0.4
+        version: 3.0.4(ai@6.0.76(zod@4.1.5))(zod@4.1.5)
       pdf-parse-new:
         specifier: ^2.0.0
         version: 2.0.0
@@ -3964,6 +3970,12 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  ai-sdk-ollama@3.5.0:
+    resolution: {integrity: sha512-G7cD0AEz3MJ3kGuhotDnscH2YnlX2gEdIuY7Y3A4fFxhocEsvS6bAiyO2A4EcPVEa5a6iniJaYTlqDKVXPis4Q==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      ai: ^6.0.77
+
   ai@6.0.76:
     resolution: {integrity: sha512-UnFM68DYOsKXySyj1kf1+EtqFOjDMs88zYbMZbas27izA+lJXqPkZizZIlLcI8xCrkUo89x6tTAdDd6EgD76og==}
     engines: {node: '>=18'}
@@ -6508,6 +6520,13 @@ packages:
   oidc-token-hash@5.1.1:
     resolution: {integrity: sha512-D7EmwxJV6DsEB6vOFLrBM2OzsVgQzgPWyHlV2OOAVj772n+WTXpudC9e9u5BVKQnYwaD30Ivhi9b+4UeBcGu9g==}
     engines: {node: ^10.13.0 || >=12.0.0}
+
+  ollama-ai-provider-v2@3.0.4:
+    resolution: {integrity: sha512-gtvqJcw1z9O/uYXgXdNAbm8roTJekJlZs5UMU62iElrsz/osUOGSuQxnSb5fU1SDPDWlZJ2xKotrAZU7+p2kqg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      ai: ^5.0.0 || ^6.0.0
+      zod: ^4.0.16
 
   ollama@0.6.3:
     resolution: {integrity: sha512-KEWEhIqE5wtfzEIZbDCLH51VFZ6Z3ZSa6sIOg/E/tBV8S51flyqBOXi+bRxlOYKDf8i327zG9eSTb8IJxvm3Zg==}
@@ -11973,6 +11992,15 @@ snapshots:
 
   acorn@8.15.0: {}
 
+  ai-sdk-ollama@3.5.0(ai@6.0.76(zod@4.1.5))(zod@4.1.5):
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.14(zod@4.1.5)
+      ai: 6.0.76(zod@4.1.5)
+      ollama: 0.6.3
+    transitivePeerDependencies:
+      - zod
+
   ai@6.0.76(zod@4.1.5):
     dependencies:
       '@ai-sdk/gateway': 3.0.38(zod@4.1.5)
@@ -15076,6 +15104,13 @@ snapshots:
   ohash@2.0.11: {}
 
   oidc-token-hash@5.1.1: {}
+
+  ollama-ai-provider-v2@3.0.4(ai@6.0.76(zod@4.1.5))(zod@4.1.5):
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.14(zod@4.1.5)
+      ai: 6.0.76(zod@4.1.5)
+      zod: 4.1.5
 
   ollama@0.6.3:
     dependencies:

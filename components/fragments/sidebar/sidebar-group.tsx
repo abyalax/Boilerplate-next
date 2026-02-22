@@ -139,7 +139,7 @@ export const SidebarGroup: FC<Props> = ({ section }) => {
                         <SidebarMenuSubButton
                           asChild
                           className={cn(
-                            'px-4 py-1.5 \\text-sm hover:bg-accent hover:text-accent-foreground transition-colors',
+                            'px-4 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors',
                             isActive(subItem.url) && 'bg-accent text-accent-foreground font-medium',
                           )}
                         >

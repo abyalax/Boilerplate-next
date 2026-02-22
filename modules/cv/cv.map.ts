@@ -44,7 +44,7 @@ export const CVMapper = {
       educations: cv.educations.map((e) => ({
         institution: e.institution,
         degree: e.degree,
-        field: e.field,
+        major: e.major,
         startYear: e.startYear,
         endYear: e.endYear ?? undefined,
         description: e.description ?? undefined,

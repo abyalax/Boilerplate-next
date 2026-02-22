@@ -8,11 +8,10 @@ import { Message, MessageContent, MessageResponse } from '~/components/ai-elemen
 import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from '~/components/ai-elements/tool';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import { cn } from '~/lib/utils';
-import { AttachmentPreviews } from './attachment-preview';
 import { Prompt } from './prompt';
 import { PromptInput, PromptInputBody } from './prompt-input';
 
-export const ChatInterface: FC = () => {
+export const Conversations: FC = () => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -43,12 +42,13 @@ export const ChatInterface: FC = () => {
     setIsTyping(true);
     sendMessage({ text: input });
     setInput('');
+    setIsTyping(false);
   };
 
   return (
     <PromptInput onSubmit={handleSend}>
       <PromptInputBody>
-        <div className="h-full flex flex-col">
+        <div className="h-full w-full flex flex-col">
           <ScrollArea className="sm:px-[5%] lg:px-[10%] xl:px-[20%] min-h-[60vh]">
             <div className="space-y-4 pb-4">
               {messages.map((message) => (
@@ -136,7 +136,6 @@ export const ChatInterface: FC = () => {
           </ScrollArea>
 
           <div className="sticky bottom-0 sm:px-[5%] lg:px-[10%] xl:px-[20%]">
-            <AttachmentPreviews />
             <Prompt status={status} message={input} setMessage={setInput} handleSubmit={handleSend} />
           </div>
         </div>

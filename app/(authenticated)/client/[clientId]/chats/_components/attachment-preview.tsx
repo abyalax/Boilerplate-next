@@ -1,4 +1,6 @@
 import { XIcon } from 'lucide-react';
+import Image from 'next/image';
+import { ImagePreview } from './image-preview';
 import { usePromptInputAttachments } from './prompt-input';
 
 export const AttachmentPreviews = () => {
@@ -11,13 +13,19 @@ export const AttachmentPreviews = () => {
       {files.map((file) => (
         <div key={file.id} className="relative group size-16 rounded-lg border overflow-hidden">
           {file.mediaType?.startsWith('image/') ? (
-            // biome-ignore lint/performance/noImgElement: <>
-            <img src={file.url} alt={file.filename} className="object-cover size-full" />
+            <ImagePreview images={file.url} asChild={false}>
+              <Image
+                src={file.url}
+                alt={file.filename ?? ''}
+                width={300}
+                height={300}
+                className="object-cover size-full cursor-pointer"
+              />
+            </ImagePreview>
           ) : (
             <div className="flex items-center justify-center size-full bg-muted text-[10px] p-1 break-all">{file.filename}</div>
           )}
 
-          {/* Tombol Hapus */}
           <button
             onClick={() => remove(file.id)}
             className="absolute top-1 right-1 bg-destructive text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"

@@ -22,9 +22,7 @@ export const H4: FC<Props> = ({ children, className }) => (
   <h4 className={cn('scroll-m-20 text-xl font-semibold tracking-tight', className)}>{children}</h4>
 );
 
-export const P: FC<Props> = ({ children, className }) => (
-  <p className={cn('leading-7 [&:not(:first-child)]:mt-6', className)}>{children}</p>
-);
+export const P: FC<Props> = ({ children, className }) => <p className={cn('leading-7 not-first:mt-6', className)}>{children}</p>;
 
 export const Large: FC<Props> = ({ children, className }) => (
   <div className={cn('text-lg font-semibold', className)}>{children}</div>

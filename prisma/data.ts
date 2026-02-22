@@ -14,7 +14,7 @@ export const mockCVs = [
       {
         institution: 'Universitas Indonesia',
         degree: 'S1',
-        field: 'Informatika',
+        major: 'Informatika',
         startYear: 2020,
         endYear: 2024,
         description: 'Focused on software engineering and data systems',
@@ -61,7 +61,7 @@ export const mockCVs = [
       {
         institution: 'Universitas Gadjah Mada',
         degree: 'S1',
-        field: 'Sistem Informasi',
+        major: 'Sistem Informasi',
         startYear: 2018,
         endYear: 2022,
         description: '',
@@ -108,7 +108,7 @@ export const mockCVs = [
       {
         institution: 'Institut Teknologi Bandung',
         degree: 'S1',
-        field: 'Desain Produk',
+        major: 'Desain Produk',
         startYear: 2017,
         endYear: 2021,
         description: '',
@@ -155,7 +155,7 @@ export const mockCVs = [
       {
         institution: 'Universitas Indonesia',
         degree: 'S.Ked / dr.',
-        field: 'Kedokteran',
+        major: 'Kedokteran',
         startYear: 2009,
         endYear: 2015,
         description: '',
@@ -163,7 +163,7 @@ export const mockCVs = [
       {
         institution: 'Universitas Indonesia',
         degree: 'Spesialis',
-        field: 'Ilmu Kesehatan Anak',
+        major: 'Ilmu Kesehatan Anak',
         startYear: 2017,
         endYear: 2021,
         description: '',
@@ -203,7 +203,7 @@ export const mockCVs = [
       {
         institution: 'Universitas Gadjah Mada',
         degree: 'S1',
-        field: 'Teknik Informatika',
+        major: 'Teknik Informatika',
         startYear: 2017,
         endYear: 2021,
         description: '',
@@ -250,7 +250,7 @@ export const mockCVs = [
       {
         institution: 'Universitas Padjadjaran',
         degree: 'S1',
-        field: 'Ilmu Komunikasi',
+        major: 'Ilmu Komunikasi',
         startYear: 2015,
         endYear: 2019,
         description: '',
@@ -290,7 +290,7 @@ export const mockCVs = [
       {
         institution: 'Institut Teknologi Sepuluh Nopember',
         degree: 'S1',
-        field: 'Teknik Elektro',
+        major: 'Teknik Elektro',
         startYear: 2014,
         endYear: 2018,
         description: '',
@@ -330,7 +330,7 @@ export const mockCVs = [
       {
         institution: 'Universitas Brawijaya',
         degree: 'S1',
-        field: 'Ilmu Komunikasi',
+        major: 'Ilmu Komunikasi',
         startYear: 2016,
         endYear: 2020,
         description: '',
@@ -372,7 +372,7 @@ export const mockCVs = [
       {
         institution: 'Institut Teknologi Bandung',
         degree: 'S1',
-        field: 'Teknik Perminyakan',
+        major: 'Teknik Perminyakan',
         startYear: 2016,
         endYear: 2020,
         description: '',
@@ -412,7 +412,7 @@ export const mockCVs = [
       {
         institution: 'STP Trisakti',
         degree: 'S1',
-        field: 'Manajemen Perhotelan',
+        major: 'Manajemen Perhotelan',
         startYear: 2008,
         endYear: 2012,
         description: '',
@@ -448,7 +448,7 @@ export const mockCVs = [
       {
         institution: 'Universitas Bina Nusantara',
         degree: 'S1',
-        field: 'Manajemen',
+        major: 'Manajemen',
         startYear: 2016,
         endYear: 2020,
         description: '',
@@ -488,7 +488,7 @@ export const mockCVs = [
       {
         institution: 'Universitas Indonesia',
         degree: 'S1',
-        field: 'Psikologi',
+        major: 'Psikologi',
         startYear: 2015,
         endYear: 2019,
         description: '',

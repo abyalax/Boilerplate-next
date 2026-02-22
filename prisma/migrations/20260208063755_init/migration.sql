@@ -1,22 +1,16 @@
-/*
-  Warnings:
 
-  - You are about to drop the column `certificate` on the `cv` table. All the data in the column will be lost.
-  - You are about to drop the column `education` on the `cv` table. All the data in the column will be lost.
-  - You are about to drop the column `experience` on the `cv` table. All the data in the column will be lost.
-  - You are about to drop the column `interest` on the `cv` table. All the data in the column will be lost.
-  - You are about to drop the column `projects` on the `cv` table. All the data in the column will be lost.
-  - You are about to drop the column `skill` on the `cv` table. All the data in the column will be lost.
+-- CreateTable
+CREATE TABLE "cv" (
+    "id" SERIAL NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "name" VARCHAR(255) NOT NULL,
+    "email" VARCHAR(100) NOT NULL,
+    "address" VARCHAR(255) NOT NULL,
+    "linkedin" VARCHAR(150) NOT NULL,
+    "about" TEXT NOT NULL,
 
-*/
--- AlterTable
-ALTER TABLE "cv" DROP COLUMN "certificate",
-DROP COLUMN "education",
-DROP COLUMN "experience",
-DROP COLUMN "interest",
-DROP COLUMN "projects",
-DROP COLUMN "skill",
-ALTER COLUMN "linkedin" SET DATA TYPE VARCHAR(150);
+    CONSTRAINT "cv_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "skills" (
@@ -43,9 +37,9 @@ CREATE TABLE "educations" (
     "cv_id" INTEGER NOT NULL,
     "institution" VARCHAR(255) NOT NULL,
     "degree" VARCHAR(150) NOT NULL,
-    "field" VARCHAR(150) NOT NULL,
-    "startYear" INTEGER NOT NULL,
-    "endYear" INTEGER,
+    "major" VARCHAR(150) NOT NULL,
+    "start_year" INTEGER NOT NULL,
+    "end_year" INTEGER,
     "description" TEXT NOT NULL,
 
     CONSTRAINT "educations_pkey" PRIMARY KEY ("id")
@@ -57,9 +51,9 @@ CREATE TABLE "experiences" (
     "cv_id" INTEGER NOT NULL,
     "company" VARCHAR(255) NOT NULL,
     "role" VARCHAR(255) NOT NULL,
-    "startDate" TIMESTAMP(3) NOT NULL,
-    "endDate" TIMESTAMP(3),
-    "isCurrent" BOOLEAN NOT NULL DEFAULT false,
+    "start_date" TIMESTAMP(3) NOT NULL,
+    "end_date" TIMESTAMP(3),
+    "is_current" BOOLEAN NOT NULL DEFAULT false,
     "description" TEXT NOT NULL,
 
     CONSTRAINT "experiences_pkey" PRIMARY KEY ("id")
@@ -71,7 +65,7 @@ CREATE TABLE "projects" (
     "cv_id" INTEGER NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "description" TEXT NOT NULL,
-    "techStack" VARCHAR(255) NOT NULL,
+    "techstack" VARCHAR(255) NOT NULL,
     "link" TEXT,
 
     CONSTRAINT "projects_pkey" PRIMARY KEY ("id")
@@ -83,7 +77,7 @@ CREATE TABLE "certificates" (
     "cv_id" INTEGER NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "issuer" VARCHAR(255) NOT NULL,
-    "issuedYear" INTEGER NOT NULL,
+    "issued_year" INTEGER NOT NULL,
     "description" TEXT NOT NULL,
 
     CONSTRAINT "certificates_pkey" PRIMARY KEY ("id")
@@ -98,6 +92,56 @@ CREATE TABLE "interests" (
 
     CONSTRAINT "interests_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "users" (
+    "id" SERIAL NOT NULL,
+    "name" VARCHAR(255) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
+    "email" VARCHAR(255) NOT NULL,
+
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "permissions" (
+    "id" SERIAL NOT NULL,
+    "key" VARCHAR(100) NOT NULL,
+    "name" VARCHAR(100) NOT NULL,
+
+    CONSTRAINT "permissions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "role_permissions" (
+    "role_id" INTEGER NOT NULL,
+    "permission_id" INTEGER NOT NULL,
+    "roles_id" INTEGER,
+
+    CONSTRAINT "RolePermissions_role_id_permission_id_pk" PRIMARY KEY ("role_id","permission_id")
+);
+
+-- CreateTable
+CREATE TABLE "roles" (
+    "id" SERIAL NOT NULL,
+    "name" VARCHAR(100) NOT NULL,
+
+    CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "user_roles" (
+    "user_id" INTEGER NOT NULL,
+    "role_id" INTEGER NOT NULL,
+
+    CONSTRAINT "user_roles_user_id_role_id_pk" PRIMARY KEY ("user_id","role_id")
+);
+
+-- CreateIndex
+CREATE INDEX "cv_name_idx" ON "cv"("name");
+
+-- CreateIndex
+CREATE INDEX "cv_email_idx" ON "cv"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "skills_name_key" ON "skills"("name");
@@ -129,6 +173,21 @@ CREATE INDEX "certificates_name_idx" ON "certificates"("name");
 -- CreateIndex
 CREATE INDEX "certificates_issuer_idx" ON "certificates"("issuer");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE INDEX "users_name_idx" ON "users"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "permissions_key_unique" ON "permissions"("key");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "roles_name_unique" ON "roles"("name");
+
+-- AddForeignKey
+ALTER TABLE "cv" ADD CONSTRAINT "cv_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
 -- AddForeignKey
 ALTER TABLE "cv_skills" ADD CONSTRAINT "cv_skills_cv_id_fkey" FOREIGN KEY ("cv_id") REFERENCES "cv"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -149,3 +208,15 @@ ALTER TABLE "certificates" ADD CONSTRAINT "certificates_cv_id_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "interests" ADD CONSTRAINT "interests_cv_id_fkey" FOREIGN KEY ("cv_id") REFERENCES "cv"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_permission_id_fkey" FOREIGN KEY ("permission_id") REFERENCES "permissions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -51,7 +51,7 @@ export const Component: FC = () => {
         </Flex>
       ),
     },
-    { label: 'Education', children: data?.educations[0].field },
+    { label: 'Education', children: data?.educations[0].major },
   ];
 
   return (

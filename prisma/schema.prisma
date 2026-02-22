@@ -67,7 +67,7 @@ model Education {
 
   institution String @db.VarChar(255)
   degree      String @db.VarChar(150)
-  field       String @db.VarChar(150)
+  major       String @db.VarChar(150)
 
   startYear Int  @map("start_year")
   endYear   Int? @map("end_year")

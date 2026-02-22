@@ -73,7 +73,7 @@ export const useColumns = (params?: Params) => {
         cell: ({ row }) => {
           const lastEdu = row.original.educations?.[row.original.educations.length - 1];
           if (!lastEdu) return '-';
-          return `${lastEdu.degree} @ ${lastEdu.field}`;
+          return `${lastEdu.degree} @ ${lastEdu.major}`;
         },
       }),
 
