@@ -83,3 +83,15 @@ export async function cvSeeder() {
   }
   console.log('✅ Seeding cv done!');
 }
+
+cvSeeder()
+  .then(() => {
+    console.log('CV Seeds Done');
+    prisma.$disconnect();
+    process.exit(1);
+  })
+  .catch((e) => {
+    console.log(e);
+    prisma.$disconnect();
+    process.exit(1);
+  });

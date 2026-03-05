@@ -2,13 +2,13 @@
 export type roles = 'Client' | 'Admin';
 
 export const ROLE = Object.freeze({
-  ADMIN: 'Admin',
   CLIENT: 'Client',
+  ADMIN: 'Admin',
 } as const);
 
 export const ROLEIDS = Object.freeze({
-  Admin: 1,
-  Client: 2,
+  Client: 1,
+  Admin: 2,
 } as const);
 
 export const PERMISSIONS = Object.freeze({

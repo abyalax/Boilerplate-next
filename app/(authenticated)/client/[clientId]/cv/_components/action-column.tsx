@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { url } from '~/lib/utils/converter';
 import { CV } from '~/modules/cv/cv.type';
 import { useDeleteCV } from '../_hooks/use-delete-cv';
+import { CreateBarcode } from './create-barcode';
 
 type Props = {
   record: CV;
@@ -33,6 +34,9 @@ export const ActionColumn: FC<Props> = ({ record }) => {
         <DropdownMenuItem onClick={handleDetail}>Detail</DropdownMenuItem>
         <DropdownMenuItem onClick={handleUpdate}>Update</DropdownMenuItem>
         <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <CreateBarcode data={record} />
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

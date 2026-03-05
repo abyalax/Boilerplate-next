@@ -82,6 +82,7 @@ export const useColumns = (params?: Params) => {
         header: 'Action',
         cell: (info) => <ActionColumn record={info.row.original} />,
       }),
+
       columnHelper.display({
         id: 'expander',
         header: '',

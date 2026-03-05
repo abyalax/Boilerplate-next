@@ -124,6 +124,8 @@ export class Repository<
       include: options.include,
     });
 
+    console.log({ data });
+
     const total_pages = Math.ceil(total_count / per_page);
 
     return {
